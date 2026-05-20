@@ -132,90 +132,132 @@ body { background:var(--bg); color:var(--text); font-family:var(--font-sans); li
 <div class="section">
   <h2>整体架构</h2>
 
-  <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;font-family:var(--font-mono);font-size:0.78rem;">
+  <div style="position:relative;padding:12px 0;">
 
-    <!-- L1: 数据接入层 -->
-    <div style="border-bottom:1px solid var(--border);">
-      <div class="arch-header" onclick="toggleArch(0)" style="padding:12px 16px;cursor:pointer;display:flex;align-items:center;gap:10px;background:var(--code-bg);">
-        <span class="arch-arrow" id="arch-arrow-0">▸</span>
-        <span style="font-weight:600;">数据接入层</span>
-        <span style="color:var(--muted);font-size:0.7rem;">交易流水 / KYC / 黑名单 / 舆情</span>
-      </div>
-      <div class="arch-detail" id="arch-detail-0" style="display:none;padding:14px 18px;background:var(--card);">
-        <table style="width:100%;border-collapse:collapse;font-size:0.75rem;">
-          <tr style="border-bottom:1px solid var(--border);"><td style="padding:6px 10px;color:var(--muted);width:100px;">交易流水</td><td style="padding:6px 10px;">Kafka 实时流接入核心交易系统，T+0 延迟</td></tr>
-          <tr style="border-bottom:1px solid var(--border);"><td style="padding:6px 10px;color:var(--muted);">账户 / KYC</td><td style="padding:6px 10px;">T+1 批量同步至数仓</td></tr>
-          <tr style="border-bottom:1px solid var(--border);"><td style="padding:6px 10px;color:var(--muted);">黑名单</td><td style="padding:6px 10px;">OFAC / UN / 央行制裁名单每日同步，向量模糊匹配</td></tr>
-          <tr style="border-bottom:1px solid var(--border);"><td style="padding:6px 10px;color:var(--muted);">舆情数据</td><td style="padding:6px 10px;">新闻 / 司法公告实时抓取，NLP 提取风险实体</td></tr>
-          <tr><td style="padding:6px 10px;color:var(--muted);">预处理</td><td style="padding:6px 10px;">实体链接 · 异常值过滤 · 7/30/90天特征工程</td></tr>
-        </table>
-      </div>
-    </div>
-
-    <!-- L2: 数据存储层 -->
-    <div style="border-bottom:1px solid var(--border);">
-      <div class="arch-header" onclick="toggleArch(1)" style="padding:12px 16px;cursor:pointer;display:flex;align-items:center;gap:10px;background:var(--code-bg);">
-        <span class="arch-arrow" id="arch-arrow-1">▸</span>
-        <span style="font-weight:600;">数据处理与存储层</span>
-        <span style="color:var(--muted);font-size:0.7rem;">PostgreSQL + Neo4j + Qdrant + InfluxDB</span>
-      </div>
-      <div class="arch-detail" id="arch-detail-1" style="display:none;padding:14px 18px;background:var(--card);">
-        <table style="width:100%;border-collapse:collapse;font-size:0.75rem;">
-          <tr style="border-bottom:1px solid var(--border);"><td style="padding:6px 10px;color:var(--muted);width:100px;">PostgreSQL</td><td style="padding:6px 10px;">交易记录、账户信息结构化存储，支持 SQL 查询</td></tr>
-          <tr style="border-bottom:1px solid var(--border);"><td style="padding:6px 10px;color:var(--muted);">Neo4j</td><td style="padding:6px 10px;">资金流向图谱——节点(账户/客户/企业) + 边(转账/共享设备/IP)</td></tr>
-          <tr style="border-bottom:1px solid var(--border);"><td style="padding:6px 10px;color:var(--muted);">Qdrant</td><td style="padding:6px 10px;">历史 SAR 报告向量 + 监管规则语义检索</td></tr>
-          <tr><td style="padding:6px 10px;color:var(--muted);">InfluxDB</td><td style="padding:6px 10px;">账户行为时间序列，异常检测基线</td></tr>
-        </table>
-      </div>
-    </div>
-
-    <!-- L3: Agent核心层 -->
-    <div style="border-bottom:1px solid var(--border);">
-      <div class="arch-header" onclick="toggleArch(2)" style="padding:12px 16px;cursor:pointer;display:flex;align-items:center;gap:10px;background:var(--code-bg);">
-        <span class="arch-arrow" id="arch-arrow-2">▸</span>
-        <span style="font-weight:600;">AML Agent 核心层（LLM 驱动）</span>
-        <span style="color:var(--muted);font-size:0.7rem;">ReAct · Planner · 8 Tools · Memory</span>
-      </div>
-      <div class="arch-detail" id="arch-detail-2" style="display:none;padding:14px 18px;background:var(--card);">
-        <p style="font-size:0.78rem;margin-bottom:8px;">ReAct 循环: <strong>Thought → Action → Observation</strong>，循环直到证据充分。</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.73rem;margin-bottom:12px;">
-          <div style="padding:8px;background:var(--code-bg);border-radius:4px;"><strong>任务规划器(Planner):</strong> 接收告警，拆解为子任务序列，注入 FATF 40 条建议等 AML 专业框架</div>
-          <div style="padding:8px;background:var(--code-bg);border-radius:4px;"><strong>工具调用引擎:</strong> 路由到对应 Tool，管理并发调用和结果聚合</div>
-          <div style="padding:8px;background:var(--code-bg);border-radius:4px;"><strong>记忆管理:</strong> Session 内短期记忆 + 向量库长期记忆</div>
-          <div style="padding:8px;background:var(--code-bg);border-radius:4px;"><strong>推荐模型:</strong> Claude 3.5 Sonnet / Opus</div>
+    <!-- L1: 数据接入 -->
+    <div style="background:linear-gradient(135deg,#e8f0fe,#d4e3fc);border:1px solid #a8c8f0;border-radius:10px;padding:14px 18px;margin-bottom:0;position:relative;z-index:4;cursor:pointer;" onclick="toggleArch(0)">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span class="arch-arrow" id="arch-arrow-0" style="font-size:1rem;">▾</span>
+        <div>
+          <div style="font-weight:700;font-size:0.9rem;">数据接入层</div>
+          <div style="font-size:0.7rem;color:var(--muted);">交易流水 · KYC · 黑名单 · 舆情</div>
         </div>
-        <p style="font-size:0.75rem;font-weight:600;margin-bottom:6px;">8 个调查工具:</p>
-        <div class="card-row" style="grid-template-columns:repeat(4,1fr);">
-          <div class="card" style="padding:10px;"><h4 style="font-size:0.7rem;">transaction_query</h4><div class="detail" style="font-size:0.68rem;">交易流水查询+统计摘要</div></div>
-          <div class="card" style="padding:10px;"><h4 style="font-size:0.7rem;">graph_analysis</h4><div class="detail" style="font-size:0.68rem;">N跳路径/闭环/社区发现</div></div>
-          <div class="card" style="padding:10px;"><h4 style="font-size:0.7rem;">rule_engine</h4><div class="detail" style="font-size:0.68rem;">逐条检查+法规条款引用</div></div>
-          <div class="card" style="padding:10px;"><h4 style="font-size:0.7rem;">risk_scorer</h4><div class="detail" style="font-size:0.68rem;">量化评分0-100·分项</div></div>
-          <div class="card" style="padding:10px;"><h4 style="font-size:0.7rem;">sanction_check</h4><div class="detail" style="font-size:0.68rem;">OFAC/UN+模糊匹配</div></div>
-          <div class="card" style="padding:10px;"><h4 style="font-size:0.7rem;">case_retrieval</h4><div class="detail" style="font-size:0.68rem;">向量检索历史相似案例</div></div>
-          <div class="card" style="padding:10px;"><h4 style="font-size:0.7rem;">news_search</h4><div class="detail" style="font-size:0.68rem;">客户/企业负面舆情</div></div>
-          <div class="card" style="padding:10px;"><h4 style="font-size:0.7rem;">report_generator</h4><div class="detail" style="font-size:0.68rem;">SAR草稿·监管格式</div></div>
+        <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;">
+          <span style="background:#d4e3fc;padding:2px 8px;border-radius:3px;font-size:0.65rem;font-family:var(--font-mono);">Kafka</span>
+          <span style="background:#d4e3fc;padding:2px 8px;border-radius:3px;font-size:0.65rem;font-family:var(--font-mono);">批量同步</span>
+          <span style="background:#d4e3fc;padding:2px 8px;border-radius:3px;font-size:0.65rem;font-family:var(--font-mono);">API</span>
+        </div>
+      </div>
+      <div class="arch-detail" id="arch-detail-0" style="display:block;margin-top:10px;padding-top:10px;border-top:1px dashed #a8c8f0;font-size:0.73rem;">
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;">
+          <div style="background:#fff;border-radius:6px;padding:8px;text-align:center;"><div style="font-weight:600;font-size:0.7rem;">交易流水</div><div style="color:var(--muted);font-size:0.65rem;">Kafka 实时<br>T+0</div></div>
+          <div style="background:#fff;border-radius:6px;padding:8px;text-align:center;"><div style="font-weight:600;font-size:0.7rem;">KYC 数据</div><div style="color:var(--muted);font-size:0.65rem;">T+1 批量<br>同步数仓</div></div>
+          <div style="background:#fff;border-radius:6px;padding:8px;text-align:center;"><div style="font-weight:600;font-size:0.7rem;">黑名单</div><div style="color:var(--muted);font-size:0.65rem;">OFAC/UN/央行<br>每日同步</div></div>
+          <div style="background:#fff;border-radius:6px;padding:8px;text-align:center;"><div style="font-weight:600;font-size:0.7rem;">舆情</div><div style="color:var(--muted);font-size:0.65rem;">新闻/司法<br>实时抓取</div></div>
+          <div style="background:#fff;border-radius:6px;padding:8px;text-align:center;"><div style="font-weight:600;font-size:0.7rem;">预处理</div><div style="color:var(--muted);font-size:0.65rem;">实体链接<br>特征工程</div></div>
         </div>
       </div>
     </div>
 
-    <!-- L4: 输出与干预层 -->
-    <div>
-      <div class="arch-header" onclick="toggleArch(3)" style="padding:12px 16px;cursor:pointer;display:flex;align-items:center;gap:10px;background:var(--code-bg);">
-        <span class="arch-arrow" id="arch-arrow-3">▸</span>
-        <span style="font-weight:600;">输出与干预层</span>
-        <span style="color:var(--muted);font-size:0.7rem;">SAR 报告 · 人工审核 · 仪表盘</span>
+    <!-- Arrow L1→L2 -->
+    <div style="text-align:center;padding:4px 0;position:relative;z-index:3;">
+      <span style="color:var(--muted);font-size:0.9rem;">▼</span>
+    </div>
+
+    <!-- L2: 存储 -->
+    <div style="background:linear-gradient(135deg,#f0f4e8,#e2ebd4);border:1px solid #b8ce9e;border-radius:10px;padding:14px 18px;margin-bottom:0;position:relative;z-index:3;cursor:pointer;" onclick="toggleArch(1)">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span class="arch-arrow" id="arch-arrow-1" style="font-size:1rem;">▾</span>
+        <div>
+          <div style="font-weight:700;font-size:0.9rem;">数据处理与存储层</div>
+          <div style="font-size:0.7rem;color:var(--muted);">PostgreSQL · Neo4j · Qdrant · InfluxDB</div>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;">
+          <span style="background:#e2ebd4;padding:2px 8px;border-radius:3px;font-size:0.65rem;font-family:var(--font-mono);">结构化</span>
+          <span style="background:#e2ebd4;padding:2px 8px;border-radius:3px;font-size:0.65rem;font-family:var(--font-mono);">图谱</span>
+          <span style="background:#e2ebd4;padding:2px 8px;border-radius:3px;font-size:0.65rem;font-family:var(--font-mono);">向量</span>
+          <span style="background:#e2ebd4;padding:2px 8px;border-radius:3px;font-size:0.65rem;font-family:var(--font-mono);">时序</span>
+        </div>
       </div>
-      <div class="arch-detail" id="arch-detail-3" style="display:none;padding:14px 18px;background:var(--card);">
-        <p style="font-size:0.78rem;font-weight:600;margin-bottom:8px;">可疑交易报告（SAR）结构</p>
-        <table style="width:100%;border-collapse:collapse;font-size:0.73rem;">
-          <tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 10px;color:var(--muted);width:80px;">基本信息</td><td style="padding:5px 10px;">报告编号 / 涉及账户 / 客户清单</td></tr>
-          <tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 10px;color:var(--muted);">可疑摘要</td><td style="padding:5px 10px;">时间范围、金额、行为描述（Agent 生成自然语言）</td></tr>
-          <tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 10px;color:var(--muted);">证据详情</td><td style="padding:5px 10px;">命中规则(含法规条款) · Top 10交易 · 资金流向图 · 关联账户</td></tr>
-          <tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 10px;color:var(--muted);">风险评估</td><td style="padding:5px 10px;">量化评分及分项 · 洗钱三阶段判断</td></tr>
-          <tr style="border-bottom:1px solid var(--border);"><td style="padding:5px 10px;color:var(--muted);">处置建议</td><td style="padding:5px 10px;">监控/限制/冻结 · 是否上报 · 后续调查方向</td></tr>
-          <tr><td style="padding:5px 10px;color:var(--muted);">审核签批</td><td style="padding:5px 10px;">Agent推理摘要 · 审核员意见 · 最终决策</td></tr>
-        </table>
-        <p style="font-size:0.73rem;margin-top:10px;"><strong>Human-in-the-Loop:</strong> 风险≥80 / 制裁命中 / Agent不确定 → 强制人工审核。账户冻结和SAR上报须合规官签批。</p>
+      <div class="arch-detail" id="arch-detail-1" style="display:block;margin-top:10px;padding-top:10px;border-top:1px dashed #b8ce9e;font-size:0.73rem;">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
+          <div style="background:#fff;border-radius:6px;padding:8px;"><div style="font-weight:600;font-size:0.7rem;">PostgreSQL</div><div style="color:var(--muted);font-size:0.64rem;">交易记录<br>账户信息</div></div>
+          <div style="background:#fff;border-radius:6px;padding:8px;"><div style="font-weight:600;font-size:0.7rem;">Neo4j</div><div style="color:var(--muted);font-size:0.64rem;">资金流向图谱<br>节点+边模型</div></div>
+          <div style="background:#fff;border-radius:6px;padding:8px;"><div style="font-weight:600;font-size:0.7rem;">Qdrant</div><div style="color:var(--muted);font-size:0.64rem;">SAR向量<br>语义检索</div></div>
+          <div style="background:#fff;border-radius:6px;padding:8px;"><div style="font-weight:600;font-size:0.7rem;">InfluxDB</div><div style="color:var(--muted);font-size:0.64rem;">行为时间序列<br>异常基线</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arrow L2→L3 -->
+    <div style="text-align:center;padding:4px 0;position:relative;z-index:3;">
+      <span style="color:var(--muted);font-size:0.9rem;">▼</span>
+    </div>
+
+    <!-- L3: Agent核心 -->
+    <div style="background:linear-gradient(135deg,#fef9f0,#fdf0d9);border:2px solid var(--accent);border-radius:10px;padding:14px 18px;margin-bottom:0;position:relative;z-index:2;cursor:pointer;" onclick="toggleArch(2)">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span class="arch-arrow" id="arch-arrow-2" style="font-size:1rem;">▾</span>
+        <div>
+          <div style="font-weight:700;font-size:0.9rem;color:var(--accent);">AML Agent 核心层（LLM 驱动）</div>
+          <div style="font-size:0.7rem;color:var(--muted);">ReAct · Planner · 8 Tools · Memory</div>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;">
+          <span style="background:var(--accent);color:#fff;padding:2px 8px;border-radius:3px;font-size:0.65rem;font-family:var(--font-mono);">Claude 3.5</span>
+        </div>
+      </div>
+      <div class="arch-detail" id="arch-detail-2" style="display:block;margin-top:10px;padding-top:10px;border-top:1px dashed #ead4a2;font-size:0.73rem;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;justify-content:center;">
+          <span style="background:var(--card);border:1px solid var(--border);padding:6px 14px;border-radius:6px;font-weight:600;font-size:0.73rem;">💭 Thought</span>
+          <span style="color:var(--muted);">→</span>
+          <span style="background:var(--card);border:1px solid var(--border);padding:6px 14px;border-radius:6px;font-weight:600;font-size:0.73rem;">🔧 Action</span>
+          <span style="color:var(--muted);">→</span>
+          <span style="background:var(--card);border:1px solid var(--border);padding:6px 14px;border-radius:6px;font-weight:600;font-size:0.73rem;">✅ Observation</span>
+          <span style="color:var(--muted);font-size:1.2rem;">⟳</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">
+          <div style="padding:6px 10px;background:var(--card);border-radius:5px;font-size:0.68rem;"><strong>任务规划器</strong> · 拆解告警→子任务序列 · 注入FATF 40条</div>
+          <div style="padding:6px 10px;background:var(--card);border-radius:5px;font-size:0.68rem;"><strong>工具调用引擎</strong> · 路由Tool · 并发调用 · 结果聚合</div>
+          <div style="padding:6px 10px;background:var(--card);border-radius:5px;font-size:0.68rem;"><strong>记忆管理</strong> · Session短期 + 向量库长期</div>
+          <div style="padding:6px 10px;background:var(--card);border-radius:5px;font-size:0.68rem;"><strong>模型</strong> · Claude 3.5 Sonnet / Opus</div>
+        </div>
+        <div style="font-weight:600;font-size:0.7rem;margin-bottom:6px;">8 个调查工具</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;">
+          <div style="background:#fff;border-radius:5px;padding:6px 8px;text-align:center;font-size:0.65rem;"><strong>transaction_query</strong><br><span style="color:var(--muted);">交易查询+统计</span></div>
+          <div style="background:#fff;border-radius:5px;padding:6px 8px;text-align:center;font-size:0.65rem;"><strong>graph_analysis</strong><br><span style="color:var(--muted);">闭环/社区发现</span></div>
+          <div style="background:#fff;border-radius:5px;padding:6px 8px;text-align:center;font-size:0.65rem;"><strong>rule_engine</strong><br><span style="color:var(--muted);">规则+法规引用</span></div>
+          <div style="background:#fff;border-radius:5px;padding:6px 8px;text-align:center;font-size:0.65rem;"><strong>risk_scorer</strong><br><span style="color:var(--muted);">评分0-100</span></div>
+          <div style="background:#fff;border-radius:5px;padding:6px 8px;text-align:center;font-size:0.65rem;"><strong>sanction_check</strong><br><span style="color:var(--muted);">OFAC模糊匹配</span></div>
+          <div style="background:#fff;border-radius:5px;padding:6px 8px;text-align:center;font-size:0.65rem;"><strong>case_retrieval</strong><br><span style="color:var(--muted);">历史案例检索</span></div>
+          <div style="background:#fff;border-radius:5px;padding:6px 8px;text-align:center;font-size:0.65rem;"><strong>news_search</strong><br><span style="color:var(--muted);">负面舆情</span></div>
+          <div style="background:#fff;border-radius:5px;padding:6px 8px;text-align:center;font-size:0.65rem;"><strong>report_generator</strong><br><span style="color:var(--muted);">SAR草稿</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arrow L3→L4 -->
+    <div style="text-align:center;padding:4px 0;position:relative;z-index:3;">
+      <span style="color:var(--muted);font-size:0.9rem;">▼</span>
+    </div>
+
+    <!-- L4: 输出 -->
+    <div style="background:linear-gradient(135deg,#fef5f5,#fce8e8);border:1px solid #f5c6c6;border-radius:10px;padding:14px 18px;position:relative;z-index:1;cursor:pointer;" onclick="toggleArch(3)">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span class="arch-arrow" id="arch-arrow-3" style="font-size:1rem;">▾</span>
+        <div>
+          <div style="font-weight:700;font-size:0.9rem;">输出与干预层</div>
+          <div style="font-size:0.7rem;color:var(--muted);">SAR 报告 · 人工审核 · 仪表盘</div>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;">
+          <span style="background:#fce8e8;padding:2px 8px;border-radius:3px;font-size:0.65rem;font-family:var(--font-mono);">Human-in-the-Loop</span>
+        </div>
+      </div>
+      <div class="arch-detail" id="arch-detail-3" style="display:block;margin-top:10px;padding-top:10px;border-top:1px dashed #f5c6c6;font-size:0.73rem;">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;">
+          <div style="background:#fff;border-radius:6px;padding:8px;"><div style="font-weight:600;font-size:0.7rem;">📋 SAR 报告</div><div style="color:var(--muted);font-size:0.64rem;">基本信息·行为描述<br>证据·风险评估<br>处置建议·签批</div></div>
+          <div style="background:#fff;border-radius:6px;padding:8px;"><div style="font-weight:600;font-size:0.7rem;">👤 人工审核</div><div style="color:var(--muted);font-size:0.64rem;">风险≥80强制审核<br>制裁命中确认身份<br>冻结/上报须签批</div></div>
+          <div style="background:#fff;border-radius:6px;padding:8px;"><div style="font-weight:600;font-size:0.7rem;">📊 监控仪表盘</div><div style="color:var(--muted);font-size:0.64rem;">实时预警队列<br>Agent效率指标<br>误报率追踪</div></div>
+        </div>
       </div>
     </div>
 
