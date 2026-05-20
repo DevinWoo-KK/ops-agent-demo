@@ -88,9 +88,11 @@ body { background:var(--bg); color:var(--text); font-family:var(--font-sans); li
 
 .summary { margin-top:20px; padding:16px; border-radius:8px; }
 .summary.high { background:#fef5f5; border:2px solid #f5c6c6; }
-.scenario-tab.active { color:var(--bg); background:var(--accent); border-color:var(--accent); font-weight:600; }
+.scenario-tab.active { color:var(--accent); background:#FDF2F2; border-color:var(--accent); font-weight:600; }
 .scenario-tab.active::after { content:none; }
 .scenario-tab:hover { border-color:var(--accent); }
+
+.scenario-tab { background:var(--code-bg); }
 
 .btn-row { display:flex; gap:8px; margin-top:12px; }
 .btn { padding:8px 20px; border:1px solid var(--text); background:transparent; color:var(--text); font-family:var(--font-mono); font-size:0.8rem; cursor:pointer; }
@@ -357,7 +359,7 @@ body { background:var(--bg); color:var(--text); font-family:var(--font-sans); li
 
 <!-- ═══════════ PAGE 2 ═══════════ -->
 <div id="page1" class="page">
-<div class="section"><h2>Demo 演示</h2>
+<div class="section">
 <p>选择场景，Agent 启动 ReAct 调查循环，逐步调用工具收集证据。</p>
 
 <div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;">
@@ -365,7 +367,7 @@ body { background:var(--bg); color:var(--text); font-family:var(--font-sans); li
   <button class="scenario-tab" onclick="switchScenario(1)" style="padding:8px 16px;border:1px solid var(--border);background:var(--card);cursor:pointer;font-family:var(--font-mono);font-size:0.75rem;color:var(--muted);border-radius:6px;position:relative;transition:all 0.15s;">场景2 · 贸易洗钱</button>
   <button class="scenario-tab" onclick="switchScenario(2)" style="padding:8px 16px;border:1px solid var(--border);background:var(--card);cursor:pointer;font-family:var(--font-mono);font-size:0.75rem;color:var(--muted);border-radius:6px;position:relative;transition:all 0.15s;">场景3 · 壳公司网络</button>
   <button class="scenario-tab" onclick="switchScenario(3)" style="padding:8px 16px;border:1px solid var(--border);background:var(--card);cursor:pointer;font-family:var(--font-mono);font-size:0.75rem;color:var(--muted);border-radius:6px;position:relative;transition:all 0.15s;">场景4 · 快速分层</button>
-  <button class="scenario-tab" onclick="switchScenario(4)" style="padding:8px 16px;border:1px solid var(--green);background:#F5FAF7;cursor:pointer;font-family:var(--font-mono);font-size:0.75rem;color:var(--green);border-radius:6px;position:relative;transition:all 0.15s;">场景5 · 正常误报</button>
+  <button class="scenario-tab" onclick="switchScenario(4)" style="padding:8px 16px;border:1px solid var(--border);background:var(--card);cursor:pointer;font-family:var(--font-mono);font-size:0.75rem;color:var(--muted);border-radius:6px;position:relative;transition:all 0.15s;">场景5 · 正常误报</button>
 </div>
 
 <div id="trace-root"></div><div id="controls"></div><div id="summary"></div></div>
