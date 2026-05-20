@@ -88,9 +88,9 @@ body { background:var(--bg); color:var(--text); font-family:var(--font-sans); li
 
 .summary { margin-top:20px; padding:16px; border-radius:8px; }
 .summary.high { background:#fef5f5; border:2px solid #f5c6c6; }
-.scenario-tab.active { color:var(--text); font-weight:600; }
-.scenario-tab.active::after { content:''; position:absolute; bottom:-1px; left:0; right:0; height:2px; background:var(--accent); }
-.scenario-tab:hover { color:var(--text); }
+.scenario-tab.active { color:var(--bg); background:var(--accent); border-color:var(--accent); font-weight:600; }
+.scenario-tab.active::after { content:none; }
+.scenario-tab:hover { border-color:var(--accent); }
 
 .btn-row { display:flex; gap:8px; margin-top:12px; }
 .btn { padding:8px 20px; border:1px solid var(--text); background:transparent; color:var(--text); font-family:var(--font-mono); font-size:0.8rem; cursor:pointer; }
@@ -360,11 +360,12 @@ body { background:var(--bg); color:var(--text); font-family:var(--font-sans); li
 <div class="section"><h2>Demo 演示</h2>
 <p>选择场景，Agent 启动 ReAct 调查循环，逐步调用工具收集证据。</p>
 
-<div style="display:flex;gap:0;margin-bottom:16px;border-bottom:1px solid var(--border);">
-  <button class="scenario-tab active" onclick="switchScenario(0)" style="flex:1;padding:10px 12px;border:none;background:transparent;cursor:pointer;font-family:var(--font-mono);font-size:0.72rem;color:var(--muted);position:relative;">场景1 · 拆分交易</button>
-  <button class="scenario-tab" onclick="switchScenario(1)" style="flex:1;padding:10px 12px;border:none;background:transparent;cursor:pointer;font-family:var(--font-mono);font-size:0.72rem;color:var(--muted);position:relative;">场景2 · 贸易洗钱</button>
-  <button class="scenario-tab" onclick="switchScenario(2)" style="flex:1;padding:10px 12px;border:none;background:transparent;cursor:pointer;font-family:var(--font-mono);font-size:0.72rem;color:var(--muted);position:relative;">场景3 · 壳公司网络</button>
-  <button class="scenario-tab" onclick="switchScenario(3)" style="flex:1;padding:10px 12px;border:none;background:transparent;cursor:pointer;font-family:var(--font-mono);font-size:0.72rem;color:var(--muted);position:relative;">场景4 · 快速分层</button>
+<div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;">
+  <button class="scenario-tab active" onclick="switchScenario(0)" style="padding:8px 16px;border:1px solid var(--border);background:var(--card);cursor:pointer;font-family:var(--font-mono);font-size:0.75rem;color:var(--muted);border-radius:6px;position:relative;transition:all 0.15s;">场景1 · 拆分交易</button>
+  <button class="scenario-tab" onclick="switchScenario(1)" style="padding:8px 16px;border:1px solid var(--border);background:var(--card);cursor:pointer;font-family:var(--font-mono);font-size:0.75rem;color:var(--muted);border-radius:6px;position:relative;transition:all 0.15s;">场景2 · 贸易洗钱</button>
+  <button class="scenario-tab" onclick="switchScenario(2)" style="padding:8px 16px;border:1px solid var(--border);background:var(--card);cursor:pointer;font-family:var(--font-mono);font-size:0.75rem;color:var(--muted);border-radius:6px;position:relative;transition:all 0.15s;">场景3 · 壳公司网络</button>
+  <button class="scenario-tab" onclick="switchScenario(3)" style="padding:8px 16px;border:1px solid var(--border);background:var(--card);cursor:pointer;font-family:var(--font-mono);font-size:0.75rem;color:var(--muted);border-radius:6px;position:relative;transition:all 0.15s;">场景4 · 快速分层</button>
+  <button class="scenario-tab" onclick="switchScenario(4)" style="padding:8px 16px;border:1px solid var(--green);background:#F5FAF7;cursor:pointer;font-family:var(--font-mono);font-size:0.75rem;color:var(--green);border-radius:6px;position:relative;transition:all 0.15s;">场景5 · 正常误报</button>
 </div>
 
 <div id="trace-root"></div><div id="controls"></div><div id="summary"></div></div>
@@ -487,6 +488,30 @@ const SCENARIOS = [
     { type:"action", label:"ACTION", content:"risk_scorer(account_id=\"ACC-33902\", linked_cases=\"ENT-55012\")",
       toolDetail:{fn:"tool: risk_scorer",result:"综合评分: 91 / 100 → 极高风险\n分项: 行为异常度 37/40 · 关联风险 25/25 · 黑名单 14/20 · 历史违规 15/15\n\n关联案件: ENT-55012（贸易洗钱·高风险·79分）\n合并评分: 93/100（两案关联后风险叠加）"}},
     { type:"final", label:"FINAL", content:"═══════════════════════════════════════\n调查结论 — ACC-33902（分发层账户）\n═══════════════════════════════════════\n\n风险评级: 极高 (91/100) | 合并评分: 93/100\n命中规则: R-002/R-004/R-011\n洗钱阶段: 分层 — 将大额资金拆分成86笔小额，经边境账户提现\n\n关联案件: ENT-55012（贸易洗钱）— 两个案件共享同一资金源头\n完整链路: 境外→壳公司→分发账户→86人→边境ATM取现\n\n建议: 冻结 ACC-33902 + 86收款账户 · 与 ENT-55012 并案上报央行 · 通报公安反诈中心" }
+  ],
+  // Scenario 4: 正常误报
+  [
+    { type:"task", label:"TASK", content:"个人账户 ACC-55201 触发规则 R-001（大额现金交易）预警。该账户近7天有6笔柜面现金存入，每笔 ¥80,000-120,000，累计 ¥620,000。" },
+    { type:"thought", label:"THOUGHT", content:"先查询账户基本信息和近期交易流水，了解客户背景。" },
+    { type:"action", label:"ACTION", content:"transaction_query(account_id=\"ACC-55201\", start_date=\"2024-10-28\", end_date=\"2024-11-04\")",
+      toolDetail:{fn:"tool: transaction_query",result:"返回 12 笔交易，统计摘要:\n· 现金存入: 6笔，合计 ¥620,000（每笔 ¥80K-120K）\n· 转账支出: 5笔，合计 ¥580,000\n  └ 去向: 食品供应商(3笔)、物业公司(1笔)、员工工资代发(1笔)\n· 账户余额: ¥185,000\n· 对手方: 8个，均为已知商户/企业\n· 交易附言: \"货款\"\"食材采购\"\"租金\"\"工资\"\n· 开户时间: 2019年（5年老账户）\n· 历史月均流入: ¥350,000-500,000（稳定）"}},
+    { type:"thought", label:"THOUGHT", content:"交易对手方清晰、附言明确、金额与历史基线吻合。核查客户 KYC。" },
+    { type:"action", label:"ACTION", content:"客户 KYC 查询(account_id=\"ACC-55201\")",
+      toolDetail:{fn:"KYC 数据",result:"客户: 陈某\n职业: 餐饮企业主（经营3家连锁餐厅）\n月收入: ¥80,000-150,000（个税申报记录完整）\n企业: XX餐饮管理有限公司（注册资本500万，成立6年）\n账户用途: 餐厅日常经营收款账户\n历史风险等级: 低风险\n关联企业账户: ENT-92001（正常经营，无异常）"}},
+    { type:"thought", label:"THOUGHT", content:"客户为实体餐饮企业主，账户用途明确。调用规则引擎+舆情确认。" },
+    { type:"action", label:"ACTION", content:"rule_engine(account_id=\"ACC-55201\", rule_set=\"all\")",
+      toolDetail:{fn:"tool: rule_engine",result:"仅命中 1 条规则:\n\nR-001 大额现金交易 — 6笔现金存入单笔>¥50,000\n  法规: 《金融机构大额交易和可疑交易报告管理办法》第9条\n\n但注意: R-001 是\"监测规则\"而非\"可疑判定规则\"。\n大额交易本身不等于可疑——需结合客户背景判断。"}},
+    { type:"thought", label:"THOUGHT", content:"仅命中一条监测规则。核查是否有隐藏风险——图谱分析+制裁名单。" },
+    { type:"action", label:"ACTION", content:"graph_analysis(account_id=\"ACC-55201\", depth=2, type=\"path\")",
+      toolDetail:{fn:"tool: graph_analysis",result:"【资金链路】\n现金存入→ACC-55201→供应商/物业/员工账户\n  · 食品供应商账户正常经营（开户8年，无异常）\n  · 物业公司为知名商业地产管理方\n  · 员工工资账户均为长期员工\n\n【未发现】闭环路径、共享身份、异常对手方\n【特征】单向流动(收入→支出)，符合正常经营模式"}},
+    { type:"action", label:"ACTION", content:"sanction_check(name=\"陈某\")",
+      toolDetail:{fn:"tool: sanction_check",result:"未命中任何制裁/黑名单。\n陈某及其企业无负面记录。"}},
+    { type:"action", label:"ACTION", content:"news_search(entity_name=\"XX餐饮管理有限公司\")",
+      toolDetail:{fn:"tool: news_search",result:"无负面舆情。\n企业在大众点评评分4.5/5，营业执照正常年检。"}},
+    { type:"thought", label:"THOUGHT", content:"所有证据指向正常经营。综合评分。" },
+    { type:"action", label:"ACTION", content:"risk_scorer(account_id=\"ACC-55201\")",
+      toolDetail:{fn:"tool: risk_scorer",result:"综合评分: 12 / 100 → 正常\n分项: 行为异常度 4/40 · 关联风险 3/25 · 黑名单 0/20 · 历史违规 5/15\n\n分析: 行为异常度低（金额在历史基线内），关联风险极低（对手方均为正常商户），无黑名单命中。"}},
+    { type:"final", label:"FINAL", content:"═══════════════════════════════════════\n调查结论 — 账户 ACC-55201（陈某）\n═══════════════════════════════════════\n\n风险评级: 正常 (12/100)\n命中规则: R-001（仅监测级，非可疑判定）\n\n判定理由:\n· 客户为实体餐饮企业主，账户用于日常经营收款\n· 交易对手方均为已知供应商/物业/员工\n· 交易附言明确(货款/食材/租金/工资)\n· 金额在历史基线范围内(月均¥350K-500K)\n· 账户开户5年，风险等级始终为低\n· KYC完整，个税申报记录齐全\n· 无制裁命中，无负面舆情\n\n处置: 标记为正常，关闭告警。建议将该客户加入\"白名单\"避免重复预警。" }
   ]
 ];
 
@@ -495,6 +520,7 @@ const finalSummaries = [
   { score:"79", label:"高风险", rules:"R-007/R-008/R-009/R-010", extra:"法人限制出境", advice:"冻结 + 上报SAR + 通报海关" },
   { score:"94", label:"极高风险", rules:"R-004/R-008/R-009", extra:"涉案地址 · 前科人员", advice:"冻结11账户 + 上报央行 + 通报公安" },
   { score:"91", label:"极高风险", rules:"R-002/R-004/R-011", extra:"关联ENT-55012 · 合并93分", advice:"冻结87账户 · 并案上报" },
+  { score:"12", label:"✓ 正常", rules:"仅命中监测规则R-001", extra:"实体餐饮企业主 · KYC完整", advice:"关闭告警 · 加入白名单" },
 ];
 
 let currentScenarioIdx = 0;
@@ -542,7 +568,10 @@ function renderTrace() {
   }
   root.innerHTML = html;
   const fs = finalSummaries[currentScenarioIdx];
-  document.getElementById('summary').innerHTML = currentStep >= steps.length - 1 ? `<div class="summary high"><div class="score">⚠ ${fs.label} · ${fs.score}/100</div><p style="margin-top:8px;font-size:0.85rem;">命中: ${fs.rules} | ${fs.extra}<br>建议: ${fs.advice}</p></div>` : '';
+  const isNormal = fs.score === "12";
+  const summaryCls = isNormal ? 'summary' : 'summary high';
+  const summaryStyle = isNormal ? 'background:#F5FAF7;border:2px solid #c3e6cf;' : '';
+  document.getElementById('summary').innerHTML = currentStep >= steps.length - 1 ? `<div class="${summaryCls}" style="${summaryStyle}"><div class="score" style="color:${isNormal?'var(--green)':'var(--red)'};">${isNormal?'✓':'⚠'} ${fs.label} · ${fs.score}/100</div><p style="margin-top:8px;font-size:0.85rem;">命中: ${fs.rules} | ${fs.extra}<br>建议: ${fs.advice}</p></div>` : '';
 }
 
 renderTrace();
