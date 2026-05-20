@@ -3,50 +3,88 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>反洗钱AML Agent | ReAct Demo</title>
+<title>反洗钱AML Agent | 华峻捷科面试</title>
 <style>
 :root {
   --bg: #faf9f5; --text: #141413; --muted: #6b6b6b;
   --accent: #d97757; --card: #ffffff; --border: #e8e5df;
-  --blue: #3b6fb6; --green: #3d9965; --red: #a71d2a;
+  --blue: #3b6fb6; --green: #3d9965; --red: #a71d2a; --yellow: #b8860b;
   --code-bg: #f3f1ed;
-  --font-serif: 'Georgia', serif;
+  --font-serif: 'Georgia', 'Times New Roman', serif;
   --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: 'SF Mono', 'Menlo', 'Consolas', monospace;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 body { background:var(--bg); color:var(--text); font-family:var(--font-sans); line-height:1.6; }
-.container { max-width:1000px; margin:0 auto; padding:24px; }
+.container { max-width:960px; margin:0 auto; padding:30px 24px; }
 
-.hero { padding:24px 0 16px; text-align:center; border-bottom:1px solid var(--border); margin-bottom:20px; }
-.hero h1 { font-family:var(--font-serif); font-size:1.6rem; font-weight:700; color:var(--accent); }
-.hero .sub { color:var(--muted); font-size:0.85rem; }
+/* Hero */
+.hero { padding:30px 0 20px; text-align:center; border-bottom:1px solid var(--border); margin-bottom:24px; }
+.hero h1 { font-family:var(--font-serif); font-size:1.8rem; font-weight:700; color:var(--accent); margin-bottom:6px; }
+.hero .sub { color:var(--muted); font-size:0.9rem; }
+.hero .tags { margin-top:12px; display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+.tag { background:var(--code-bg); padding:4px 12px; font-size:0.75rem; color:var(--muted); font-family:var(--font-mono); }
+
+/* Page Nav */
+.page-nav { display:flex; gap:0; margin-bottom:28px; border-bottom:1px solid var(--border); }
+.page-nav button { flex:1; padding:14px 20px; border:none; background:transparent; cursor:pointer; font-family:var(--font-serif); font-size:1rem; color:var(--muted); transition:all 0.2s; position:relative; }
+.page-nav button:hover { color:var(--text); }
+.page-nav button.active { color:var(--text); font-weight:600; }
+.page-nav button.active::after { content:''; position:absolute; bottom:-1px; left:0; right:0; height:2px; background:var(--accent); }
+.page { display:none; }
+.page.active { display:block; }
+
+/* Sections */
+.section { margin-bottom:48px; }
+.section h2 { font-family:var(--font-serif); font-size:1.4rem; font-weight:700; color:var(--accent); margin-bottom:16px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+.section h3 { font-size:1rem; font-weight:600; margin:24px 0 10px; }
+.section p { margin-bottom:10px; color:#3a3a3a; font-size:0.9rem; }
+
+/* Cards */
+.card-row { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px; margin:12px 0; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:16px; }
+.card h4 { font-family:var(--font-mono); font-size:0.85rem; color:var(--blue); margin-bottom:6px; }
+.card .detail { font-size:0.78rem; color:var(--muted); line-height:1.5; }
+
+/* Flow */
+.flow { display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:center; padding:16px; background:var(--code-bg); border-radius:8px; margin:12px 0; }
+.flow-step { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:10px 18px; text-align:center; font-family:var(--font-mono); font-size:0.82rem; }
+.flow-step .icon { font-size:1.2rem; margin-bottom:3px; }
+.flow-arrow { color:var(--muted); }
+.flow.large .flow-step { padding:14px 28px; font-size:0.9rem; }
+
+/* Bar */
+.bar { background:var(--code-bg); border-radius:6px; padding:10px 16px; margin-bottom:12px; font-family:var(--font-mono); font-size:0.78rem; display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+.bar .stat { text-align:center; }
+.bar .stat .n { font-size:1.1rem; font-weight:600; }
 
 /* ReAct trace */
-.trace { margin:16px 0; }
-.trace-block { margin-bottom:12px; padding:12px 16px; border-radius:8px; font-family:var(--font-mono); font-size:0.78rem; line-height:1.5; }
+.trace-block { margin-bottom:10px; padding:12px 16px; border-radius:8px; font-family:var(--font-mono); font-size:0.76rem; line-height:1.5; }
 .trace-thought { background:#f2f4ff; border:1px solid #d0daf5; border-left:3px solid #6b8cff; }
 .trace-action { background:#fef9f0; border:1px solid #ead4a2; border-left:3px solid #d9a845; }
 .trace-observation { background:#f2faf5; border:1px solid #c3e6cf; border-left:3px solid var(--green); }
 .trace-final { background:#fef5f5; border:1px solid #f5c6c6; border-left:3px solid var(--red); }
-.trace-label { font-size:0.65rem; font-weight:700; letter-spacing:1px; margin-bottom:4px; }
+.trace-label { font-size:0.65rem; font-weight:700; letter-spacing:1px; margin-bottom:3px; }
 .trace-thought .trace-label { color:#6b8cff; }
 .trace-action .trace-label { color:#d9a845; }
 .trace-observation .trace-label { color:var(--green); }
 .trace-final .trace-label { color:var(--red); }
 .trace-content { white-space:pre-wrap; }
-
-/* Tool call detail */
-.tool-call { background:var(--card); border:1px solid var(--border); border-radius:6px; padding:10px 14px; margin:8px 0; font-size:0.75rem; }
+.tool-call { background:var(--card); border:1px solid var(--border); border-radius:6px; padding:10px 14px; margin:6px 0; font-size:0.73rem; }
 .tool-call .fn { font-weight:700; color:var(--blue); margin-bottom:4px; }
-.tool-call .params { color:var(--muted); font-size:0.72rem; }
-.tool-call .result { margin-top:6px; padding:8px; background:var(--code-bg); border-radius:4px; font-size:0.72rem; max-height:200px; overflow-y:auto; }
+.tool-call .result { margin-top:6px; padding:8px; background:var(--code-bg); border-radius:4px; font-size:0.72rem; max-height:200px; overflow-y:auto; white-space:pre-wrap; }
 
-.progress { display:flex; gap:3px; margin:8px 0; }
+/* Progress */
+.progress { display:flex; gap:3px; margin:8px 0 16px; }
 .progress .dot { width:8px; height:8px; border-radius:50%; background:var(--border); }
 .progress .dot.done { background:var(--green); }
-.progress .dot.current { background:var(--accent); animation:pulse 1s infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.progress .dot.current { background:var(--accent); }
+
+/* Summary */
+.summary { margin-top:20px; padding:16px; border-radius:8px; }
+.summary.high { background:#fef5f5; border:2px solid #f5c6c6; }
+.summary .score { font-size:2rem; font-weight:700; color:var(--red); }
+.summary .meta { font-size:0.8rem; color:var(--muted); margin-top:8px; }
 
 .btn-row { display:flex; gap:8px; margin-top:12px; }
 .btn { padding:8px 20px; border:1px solid var(--text); background:transparent; color:var(--text); font-family:var(--font-mono); font-size:0.8rem; cursor:pointer; }
@@ -54,330 +92,254 @@ body { background:var(--bg); color:var(--text); font-family:var(--font-sans); li
 .btn.accent { border-color:var(--accent); color:var(--accent); }
 .btn.accent:hover { background:var(--accent); color:#fff; }
 
-.summary { margin-top:20px; padding:16px; border-radius:8px; }
-.summary.high { background:#fef5f5; border:2px solid #f5c6c6; }
-.summary .score { font-size:2rem; font-weight:700; color:var(--red); }
-.summary .meta { font-size:0.8rem; color:var(--muted); margin-top:8px; }
-
 .footer { text-align:center; padding:24px 0; color:var(--muted); font-size:0.75rem; border-top:1px solid var(--border); margin-top:30px; }
+
+@media(max-width:600px){ .flow{flex-direction:column;} .flow-arrow{transform:rotate(90deg);} }
 </style>
 </head>
 <body>
 <div class="container">
 
+<!-- ══ HERO ══ -->
 <div class="hero">
   <h1>反洗钱 AML Agent</h1>
   <p class="sub">ReAct 推理模式 · 8 工具并行调查 · 可解释推理链</p>
+  <div class="tags">
+    <span class="tag">ReAct Agent</span>
+    <span class="tag">transaction_query</span>
+    <span class="tag">graph_analysis</span>
+    <span class="tag">sanction_check</span>
+    <span class="tag">risk_scorer</span>
+    <span class="tag">FATF 40条</span>
+  </div>
 </div>
 
-<div id="trace-root"></div>
-<div id="controls"></div>
-<div id="summary"></div>
-<div class="footer">AML Agent Demo · ReAct 架构 · 华峻捷科面试作品 · 2026</div>
-
+<!-- ══ PAGE NAV ══ -->
+<div class="page-nav">
+  <button class="active" onclick="switchPage(0)">设计说明</button>
+  <button onclick="switchPage(1)">Demo 演示</button>
 </div>
+
+<!-- ═══════════ PAGE 1 ═══════════ -->
+<div id="page0" class="page active">
+
+<div class="section">
+  <h2>什么是反洗钱（AML）</h2>
+  <p>洗钱分三个阶段：<strong>放置</strong>（现金进入银行）→ <strong>分层</strong>（多账户流转隐匿来源）→ <strong>整合</strong>（回流为合法资金）。</p>
+  <p>银行的 AML 系统靠规则引擎筛查交易——单日现金超5万就报警。结果是：<strong style="color:var(--red);">每天几千条告警，99% 是误报</strong>，合规人员淹没在假警报中。真正的可疑交易反而容易漏掉。</p>
+
+  <h3>传统规则的局限</h3>
+  <div class="card-row">
+    <div class="card">
+      <h4>规则引擎能做的</h4>
+      <div class="detail">单笔金额超阈值 → 告警<br>与黑名单账户交易 → 告警<br>短期高频交易 → 告警</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--red);">
+      <h4>规则引擎做不了的</h4>
+      <div class="detail">拆分成多笔小额规避阈值<br>换不同网点分散存入<br>多层账户循环流转洗白<br>识别新型洗钱手法（NFT/混币）</div>
+    </div>
+  </div>
+
+  <p><strong style="color:var(--green);">Agent 的价值:</strong> 不是替代规则引擎，而是接在规则引擎后面——告警来了，Agent 自动调取关联交易、图谱分析资金链路、核查制裁名单、检索历史案例，然后给出可解释的判断。合规人员只需要复核 Agent 标为"可疑"的案例。</p>
+</div>
+
+<div class="section">
+  <h2>Agent 设计思路</h2>
+
+  <h3>ReAct 推理模式</h3>
+  <p>不是一次性分析完——是 <strong>Thought（思考下一步该查什么）→ Action（调工具）→ Observation（看结果）→ 再 Thought</strong>，循环迭代直到证据充分。</p>
+  <div class="flow large">
+    <div class="flow-step"><div class="icon">💭</div>Thought<br><span style="font-size:0.65rem;color:var(--muted);">推理下一步</span></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><div class="icon">🔧</div>Action<br><span style="font-size:0.65rem;color:var(--muted);">调用工具</span></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><div class="icon">✅</div>Observation<br><span style="font-size:0.65rem;color:var(--muted);">获取结果</span></div>
+    <div class="flow-arrow" style="font-size:1.5rem;">⟳</div>
+  </div>
+
+  <h3>8 个调查工具</h3>
+  <div class="card-row">
+    <div class="card"><h4>transaction_query</h4><div class="detail">查询指定账户的交易流水，含统计摘要（总笔数/总金额/对手方/夜间占比）</div></div>
+    <div class="card"><h4>graph_analysis</h4><div class="detail">追踪资金流向，发现闭环路径、共享身份、社区网络</div></div>
+    <div class="card"><h4>rule_engine</h4><div class="detail">逐条检查 FATF/央行 AML 规则，含法规条款引用</div></div>
+    <div class="card"><h4>risk_scorer</h4><div class="detail">综合评分 0-100，分项评估行为异常/关联风险/黑名单/历史</div></div>
+    <div class="card"><h4>sanction_check</h4><div class="detail">核查 OFAC/UN 制裁名单，支持模糊匹配防拼写变体</div></div>
+    <div class="card"><h4>case_retrieval</h4><div class="detail">向量检索相似历史案例，提供参考依据</div></div>
+    <div class="card"><h4>news_search</h4><div class="detail">检索客户/企业负面舆情</div></div>
+    <div class="card"><h4>report_generator</h4><div class="detail">生成符合监管格式的 SAR 报告草稿</div></div>
+  </div>
+
+  <h3>Human-in-the-Loop</h3>
+  <p>Agent 永远只做<strong>分析和建议</strong>。账户冻结、SAR 上报等具有法律效力的操作，必须合规官签批。Agent 的完整推理链可展开审计——每一步用了什么工具、什么数据、得出什么结论。</p>
+  <div class="card-row">
+    <div class="card" style="border-left:3px solid var(--green);"><h4>Agent 自动完成</h4><div class="detail">调取交易 · 图谱分析 · 规则检查 · 制裁核查 · 风险评分 · 案例检索 · SAR 草稿生成</div></div>
+    <div class="card" style="border-left:3px solid var(--red);"><h4>合规官决策</h4><div class="detail">确认制裁名单身份 · 决定是否上报央行 · 冻结/限制账户 · 驳回或修正 Agent 结论</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>为什么华峻捷科适合做这个</h2>
+  <p>华峻捷科已经在给东莞银行做反洗钱系统。银行的最大痛点不是"规则不够多"，而是<strong>误报太多淹没了真正可疑的交易</strong>。Agent 接在现有规则引擎后面，不需要替换已有系统——对客户来说是"加一个智能筛选层"，不是"推翻重做"。</p>
+  <div class="card-row">
+    <div class="card" style="text-align:center;"><h4>人工审核</h4><div style="font-size:1.4rem;font-family:var(--font-mono);">15-30 分钟/笔</div><div class="detail">登录多系统 · 手动关联交易 · 撰写报告</div></div>
+    <div class="card" style="text-align:center;border-left:3px solid var(--green);"><h4>Agent 辅助</h4><div style="font-size:1.4rem;font-family:var(--font-mono);color:var(--green);">4.2 分钟/笔</div><div class="detail">自动调取 · LLM分析 · 自动生成报告</div></div>
+    <div class="card" style="text-align:center;border-left:3px solid var(--accent);"><h4>整体效率</h4><div style="font-size:1.4rem;font-family:var(--font-mono);color:var(--accent);">减少 80% 人力</div><div class="detail">3,847条告警→770条需人工复核</div></div>
+  </div>
+</div>
+
+</div><!-- /page0 -->
+
+<!-- ═══════════ PAGE 2 ═══════════ -->
+<div id="page1" class="page">
+
+<div class="section">
+  <h2>Demo 演示</h2>
+  <p>账户 ACC-88812 触发大额现金交易预警。Agent 启动 ReAct 调查循环，逐步调用工具收集证据。</p>
+
+  <div id="trace-root"></div>
+  <div id="controls"></div>
+  <div id="summary"></div>
+</div>
+
+</div><!-- /page1 -->
+
+<div class="footer">
+  反洗钱 AML Agent Demo · ReAct 架构 · 华峻捷科面试作品 · 2026
+</div>
+
+</div><!-- /container -->
 
 <script>
-// ═══════════════════════════════════════════════════
-// SIMULATED DATA LAYER
-// ═══════════════════════════════════════════════════
-
-const DB = {
-  accounts: {
-    "ACC-88812": { customer_id:"CUST-4201", open_date:"2024-03-15", type:"个人储蓄", risk_level:"中低", balance:82300 },
-    "ACC-22301": { customer_id:"CUST-5882", open_date:"2024-08-02", type:"个人储蓄", risk_level:"中", balance:1200 },
-    "ACC-55029": { customer_id:"CUST-4201", open_date:"2024-09-11", type:"个人储蓄", risk_level:"中低", balance:560000 },
-    "ACC-71102": { customer_id:"CUST-9043", open_date:"2024-06-20", type:"企业结算", risk_level:"高", balance:0 },
-    "ACC-30045": { customer_id:"CUST-7166", open_date:"2024-07-08", type:"个人储蓄", risk_level:"中", balance:4200 },
-    "ACC-11208": { customer_id:"CUST-4201", open_date:"2024-10-01", type:"个人储蓄", risk_level:"中低", balance:150000 },
-  },
-  customers: {
-    "CUST-4201": { name:"张某", id:"440************235", nationality:"中国", pep:false, sanction:false, occupation:"个体工商户", monthlyIncome:"8,000-12,000" },
-    "CUST-5882": { name:"李某", id:"360************891", nationality:"中国", pep:false, sanction:false, occupation:"无固定职业", monthlyIncome:"<5,000" },
-    "CUST-9043": { name:"XX贸易有限公司", id:"9144************X8", nationality:"中国", pep:false, sanction:false, occupation:"企业", monthlyIncome:"—" },
-    "CUST-7166": { name:"王某", id:"510************467", nationality:"中国", pep:false, sanction:false, occupation:"自由职业", monthlyIncome:"<5,000" },
-  },
-  sanctionDB: [
-    { name:"Zhang XX", id_fragment:"440************235", similarity:0.91, list:"OFAC SDN", reason:"涉嫌跨境毒品资金链" },
-  ],
-  rules: {
-    "R-001": { name:"大额现金交易", desc:"单日现金交易超5万元", threshold:"50,000 CNY/日", regulation:"《金融机构大额交易和可疑交易报告管理办法》第9条" },
-    "R-002": { name:"分散转入集中转出", desc:"短期内多笔小额分散转入后大额集中转出", regulation:"银发[2018]163号" },
-    "R-003": { name:"制裁名单关联", desc:"与OFAC/UN制裁名单存在直接/间接关联", regulation:"联合国安理会决议 + OFAC SDN" },
-    "R-004": { name:"短期内多新户交易", desc:"短期与>20个新对手方发生交易", regulation:"银发[2016]285号" },
-    "R-005": { name:"资金循环流转", desc:"资金经3+个账户形成闭环流转", regulation:"FATF 40条建议·第10条" },
-    "R-006": { name:"交易行为突变", desc:"交易频率/金额骤增远超历史基线", regulation:"银发[2018]163号" },
-  },
-  historicalCases: [
-    { id:"SAR-2024-0872", summary:"个体工商户账户短期内大量现金存入后分散转出，经多层账户后流向境外", verdict:"确认洗钱，账户冻结，上报央行", penalty:"罚款50万，追缴违法所得" },
-  ]
-};
-
-// 模拟交易数据
-const TXNS = [
-  {id:1, from:"外部", to:"ACC-88812", amount:49000, time:"2024-10-28 14:20", channel:"柜面现金", branch:"广州天河支行"},
-  {id:2, from:"外部", to:"ACC-88812", amount:48000, time:"2024-10-29 16:45", channel:"柜面现金", branch:"广州越秀支行"},
-  {id:3, from:"外部", to:"ACC-88812", amount:51000, time:"2024-10-30 10:30", channel:"柜面现金", branch:"广州天河支行"},
-  {id:4, from:"ACC-88812", to:"ACC-22301", amount:98000, time:"2024-10-30 11:05", channel:"网银转账"},
-  {id:5, from:"外部", to:"ACC-88812", amount:47500, time:"2024-10-31 09:15", channel:"柜面现金", branch:"广州海珠支行"},
-  {id:6, from:"外部", to:"ACC-88812", amount:50000, time:"2024-11-01 15:40", channel:"柜面现金", branch:"广州天河支行"},
-  {id:7, from:"ACC-88812", to:"ACC-22301", amount:142000, time:"2024-11-01 16:10", channel:"网银转账"},
-  {id:8, from:"ACC-22301", to:"ACC-55029", amount:180000, time:"2024-11-01 16:12", channel:"网银转账"},
-  {id:9, from:"ACC-55029", to:"ACC-88812", amount:180000, time:"2024-11-01 16:14", channel:"网银转账"},
-  {id:10, from:"ACC-88812", to:"ACC-71102", amount:320000, time:"2024-11-02 09:30", channel:"网银转账"},
-  {id:11, from:"ACC-71102", to:"ACC-30045", amount:320000, time:"2024-11-02 09:33", channel:"网银转账"},
-  {id:12, from:"ACC-30045", to:"ACC-11208", amount:315000, time:"2024-11-02 09:35", channel:"网银转账"},
-  {id:13, from:"ACC-11208", to:"ACC-88812", amount:310000, time:"2024-11-03 14:20", channel:"网银转账"},
-  {id:14, from:"外部", to:"ACC-88812", amount:46000, time:"2024-11-04 08:50", channel:"柜面现金", branch:"广州荔湾支行"},
-  {id:15, from:"ACC-88812", to:"ACC-22301", amount:40000, time:"2024-11-04 09:05", channel:"网银转账"},
-  {id:16, from:"ACC-88812", to:"ACC-30045", amount:35000, time:"2024-11-04 10:20", channel:"网银转账"},
-  {id:17, from:"ACC-88812", to:"ACC-11208", amount:28000, time:"2024-11-04 14:15", channel:"网银转账"},
-];
-
-// 图谱分析结果（预计算）
-const GRAPH = {
-  paths: [
-    { desc:"闭环1", path:"ACC-88812→ACC-22301→ACC-55029→ACC-88812", rounds:3, amount:180000, duration:"3天" },
-    { desc:"闭环2", path:"ACC-88812→ACC-71102→ACC-30045→ACC-11208→ACC-88812", rounds:4, amount:320000, duration:"2天" },
-  ],
-  sharedIdentity: [
-    { desc:"ACC-88812、ACC-55029、ACC-11208 共享同一身份证号(CUST-4201·张某)" },
-    { desc:"ACC-22301(CUST-5882·李某)与ACC-30045(CUST-7166·王某)共享同一注册手机号" },
-  ],
-  community: "检测到由6个账户组成的紧密资金网络，社区模块度Q=0.87，存在明显的集群特征。",
-};
-
-// ═══════════════════════════════════════════════════
-// AGENT ENGINE
-// ═══════════════════════════════════════════════════
-
+// ═══════════ DATA ═══════════
 const traceSteps = [
-  // Step 0: Task
-  { type:"task", label:"TASK", content:"账户 ACC-88812 触发规则 R-001（大额现金交易）预警，请深度调查。\n关联告警ID: AML-20261028-0047" },
+  { type:"task", label:"TASK", content:"账户 ACC-88812 触发规则 R-001（大额现金交易）预警，Agent 启动深度调查。" },
 
-  // Step 1: transaction_query
-  { type:"thought", label:"THOUGHT", content:"首先查询账户 ACC-88812 近 30 天交易流水，了解交易模式基线。" },
-  { type:"action", label:"ACTION", content:"transaction_query(\n  account_id=\"ACC-88812\",\n  start_date=\"2024-10-01\",\n  end_date=\"2024-11-04\"\n)",
-    toolDetail: {
-      fn: "tool: transaction_query",
-      params: { account_id:"ACC-88812", start_date:"2024-10-01", end_date:"2024-11-04" },
-      result: `返回 17 笔交易，统计摘要:
-· 总笔数: 17
+  { type:"thought", label:"THOUGHT", content:"首先查询 ACC-88812 近30天交易流水，了解交易模式基线。" },
+  { type:"action", label:"ACTION", content:"transaction_query(account_id=\"ACC-88812\", start_date=\"2024-10-01\", end_date=\"2024-11-04\")",
+    toolDetail: { fn:"tool: transaction_query", result:`返回 17 笔交易，统计摘要:
 · 总流入: ¥241,500（7笔现金存入）
 · 总流出: ¥833,000（10笔转账）
-· 净流出: ¥591,500
-· 对手方数量: 5 个
-· 夜间交易占比(23:00-06:00): 0%
-· 近7日日均交易笔数: 2.4（过去90日均值: 0.3，突增 8.0x）
-· 现金存入金额集中区间: ¥46,000-51,000（均略低于 ¥50,000 大额线）
-· 现金存入覆盖4个不同网点（天河、越秀、海珠、荔湾）`
-    }
-  },
+· 对手方: 5个
+· 近7日日均笔数: 2.4（90日均值 0.3 → 突增 8.0x）
+· 现金金额区间: ¥46,000-51,000（均略低于 ¥50,000 大额线）
+· 现金存入网点: 4个不同支行（天河/越秀/海珠/荔湾）`
+  }},
 
-  // Step 2: rule_engine
-  { type:"thought", label:"THOUGHT", content:"交易模式高度异常：多网点、集中金额区间、频率突增。调用规则引擎检查命中哪些 AML 规则。" },
-  { type:"action", label:"ACTION", content:"rule_engine(\n  account_id=\"ACC-88812\",\n  txn_list=\"最近30天\",\n  rule_set=\"all\"\n)",
-    toolDetail: {
-      fn: "tool: rule_engine",
-      params: { account_id:"ACC-88812", txn_list:"最近30天", rule_set:"all" },
-      result: `命中规则清单（3/6）:
+  { type:"thought", label:"THOUGHT", content:"交易模式异常：多网点、集中金额区间、频率突增8倍。调用规则引擎检查命中哪些 AML 规则。" },
+  { type:"action", label:"ACTION", content:"rule_engine(account_id=\"ACC-88812\", rule_set=\"all\")",
+    toolDetail: { fn:"tool: rule_engine", result:`命中 3 条规则:
 
-✓ R-001【大额现金交易】: 5笔现金存入≥48,000且<50,000，疑似拆分规避报告线。
-  依据: 《金融机构大额交易和可疑交易报告管理办法》第9条
+✓ R-001 大额现金交易 — 5笔≥48K且<50K，疑似拆分规避报告线
+  法规: 《金融机构大额交易和可疑交易报告管理办法》第9条
 
-✓ R-002【分散转入集中转出】: 7笔小额分散现金存入后，通过2笔大额转账集中转出。
-  依据: 银发[2018]163号
+✓ R-002 分散转入集中转出 — 7笔小额分散存入后大额集中转出
+  法规: 银发[2018]163号
 
-✓ R-006【交易行为突变】: 近7日交易频率是历史基线的8.0倍。
-  依据: 银发[2018]163号`
-    }
-  },
+✓ R-006 交易行为突变 — 近7日交易频率是历史基线 8.0 倍
+  法规: 银发[2018]163号`
+  }},
 
-  // Step 3: graph_analysis  
-  { type:"thought", label:"THOUGHT", content:"已命中3条规则。但尚不清楚资金最终流向。需对 ACC-88812 为中心做图谱分析，追踪资金链路。" },
-  { type:"action", label:"ACTION", content:"graph_analysis(\n  account_id=\"ACC-88812\",\n  depth=3,\n  analysis_type=\"path/cycle/community\"\n)",
-    toolDetail: {
-      fn: "tool: graph_analysis",
-      params: { account_id:"ACC-88812", depth:3, analysis_type:"path/cycle/community" },
-      result: `图谱分析结果:
-
-【资金闭环路径】
+  { type:"thought", label:"THOUGHT", content:"已命中3条规则。需追踪资金链路，对 ACC-88812 做图谱分析。" },
+  { type:"action", label:"ACTION", content:"graph_analysis(account_id=\"ACC-88812\", depth=3, type=\"cycle/community\")",
+    toolDetail: { fn:"tool: graph_analysis", result:`【资金闭环路径】
 1. ACC-88812→ACC-22301→ACC-55029→ACC-88812
    3跳闭环，¥180,000，3天内完成
+
 2. ACC-88812→ACC-71102→ACC-30045→ACC-11208→ACC-88812
    4跳闭环，¥320,000，2天内完成
 
 【共享身份】
-· ACC-88812、ACC-55029、ACC-11208 → 同一人(张某·CUST-4201)
+· ACC-88812/ACC-55029/ACC-11208 → 同一人(张某·CUST-4201)
 · ACC-22301(李某)与ACC-30045(王某) → 共享注册手机号
 
-【社区检测】
-6个账户组成的资金网络，模块度Q=0.87（>0.7为强社区结构）`
-    }
-  },
+【社区检测】6个账户资金网络，模块度 Q=0.87（强社区结构）`
+  }},
 
-  // Step 4: sanction_check
-  { type:"thought", label:"THOUGHT", content:"资金闭环流转 + 共享身份 → 高度可疑。需核查账户持有人是否在制裁/黑名单中。" },
-  { type:"action", label:"ACTION", content:"sanction_check(\n  account_id=\"ACC-88812\"\n)",
-    toolDetail: {
-      fn: "tool: sanction_check",
-      params: { account_id:"ACC-88812" },
-      result: `⚠ 模糊命中（相似度 0.91）:
+  { type:"thought", label:"THOUGHT", content:"资金闭环+共享身份→高度可疑。核查制裁名单。" },
+  { type:"action", label:"ACTION", content:"sanction_check(account_id=\"ACC-88812\")",
+    toolDetail: { fn:"tool: sanction_check", result:`⚠ 模糊命中（相似度 0.91）
 
 名单: OFAC SDN List
 姓名: Zhang XX（模糊匹配 "张某"）
-ID片段: 440************235（与 CUST-4201 匹配）
+ID片段: 440************235
 原因: 涉嫌跨境毒品资金链
-置信度: 0.91（≥0.90 高置信度，建议人工确认身份）
+置信度: 0.91 → 需人工确认身份`
+  }},
 
-注意: 模糊匹配不等同于确认。需合规官进一步核验身份信息。`
-    }
-  },
+  { type:"thought", label:"THOUGHT", content:"证据充分。综合评分 + 检索历史案例交叉验证。" },
+  { type:"action", label:"ACTION", content:"risk_scorer(account_id=\"ACC-88812\")",
+    toolDetail: { fn:"tool: risk_scorer", result:`综合评分: 87 / 100 → 极高风险
 
-  // Step 5: risk_scorer
-  { type:"thought", label:"THOUGHT", content:"已收集足够证据。调用风险评分工具进行综合量化评估。" },
-  { type:"action", label:"ACTION", content:"risk_scorer(\n  account_id=\"ACC-88812\",\n  context=collected_evidence\n)",
-    toolDetail: {
-      fn: "tool: risk_scorer",
-      params: { account_id:"ACC-88812", context:"collected_evidence" },
-      result: `风险评分报告:
+分项:
+  行为异常度(40%): 36/40 — 频率8x、多网点、金额集中
+  关联风险(25%):   23/25 — 6账户闭环、共享身份、制裁模糊命中
+  黑名单(20%):     18/20 — OFAC SDN 模糊匹配 0.91
+  历史违规(15%):   10/15 — 无违规历史（账户仅8月）`
+  }},
 
-═══════════════════════════
-综合评分: 87 / 100
-风险等级: ████ 极高
-═══════════════════════════
-
-分项评分:
-  行为异常度(40%): 36/40 — 频率突增8x、多网点现金、金额集中区间
-  关联风险(25%):   23/25 — 6账户闭环网络、共享身份、制裁模糊命中
-  黑名单匹配(20%): 18/20 — OFAC SDN 模糊匹配 0.91
-  历史违规(15%):   10/15 — 账户无违规历史（减分项：仅开户8月）
-
-风险定性: 极高风险 — 建议立即冻结账户并上报监管`
-    }
-  },
-
-  // Step 6: case_retrieval + Final
-  { type:"thought", label:"THOUGHT", content:"检索相似历史案例，验证判断一致性。" },
-  { type:"action", label:"ACTION", content:"case_retrieval(\n  query=\"个体工商户 现金存入 分散转出 多层账户 闭环流转\"\n)",
-    toolDetail: {
-      fn: "tool: case_retrieval",
-      params: { query:"个体工商户 现金存入 分散转出 多层账户 闭环流转" },
-      result: `Top-1 相似案例 (余弦相似度 0.88):
-
+  { type:"action", label:"ACTION", content:"case_retrieval(query=\"个体工商户 现金存入 分散转出 多层账户 闭环流转\")",
+    toolDetail: { fn:"tool: case_retrieval", result:`Top-1 相似案例 (余弦相似度 0.88):
 SAR-2024-0872 | 确认洗钱
-描述: 个体工商户账户短期内大量现金存入→分散转出→经多层账户流向境外
+个体工商户大量现金存入→分散转出→多层账户→境外
 处理: 账户冻结、上报央行、罚款50万、追缴违法所得`
-    }
-  },
+  }},
 
-  // Final
   { type:"final", label:"FINAL", content:`═══════════════════════════════════════
-调查结论 — AML-20261028-0047
+调查结论 — 账户 ACC-88812（张某）
 ═══════════════════════════════════════
 
-账户 ACC-88812（张某·CUST-4201）风险评级「极高」(87/100)。
-
-关键证据:
-  1. 拆分交易(structuring): 5笔现金¥46K-51K，刻意低于¥50K报告线
-  2. 分散网点: 4个不同网点存入，规避单点触发
-  3. 资金闭环: 经6个账户形成2条闭环链路(¥180K+¥320K)
-  4. 共享身份: 3个账户为同一人，2个账户共享手机号
-  5. 制裁命中: OFAC SDN 模糊匹配(0.91)，需人工确认
-  6. 行为突变: 交易频率8倍于基线
-  7. 历史案例匹配: 与已确认洗钱案例高度相似(0.88)
-
+风险评级: 极高 (87/100)
 命中规则: R-001 / R-002 / R-006
+制裁: OFAC SDN 模糊命中(0.91)
+历史: 与已确认洗钱案例相似度 0.88
 
-洗钱阶段判断: 放置(现金存入)→分层(多账户流转)→整合(闭环回流)
+洗钱阶段: 放置(现金存入)→分层(多账户流转)→整合(闭环回流)
 
-建议处置:
-  · 立即冻结 ACC-88812 及关联账户(5个)
-  · 上报央行反洗钱监测分析中心(SAR)
-  · 合规官确认制裁名单匹配身份
-  · 调取李某、王某关联账户进一步调查` }
+建议: 立即冻结 ACC-88812 及5个关联账户 · 上报央行SAR · 合规官确认制裁身份`
+  }
 ];
 
-let currentStep = -1;
-let interval = null;
+let currentStep = -1, interval = null;
 
 function renderTrace() {
   const root = document.getElementById('trace-root');
-  let html = '';
-
-  // Progress dots
-  html += '<div class="progress">';
-  for (let i = 0; i <= 6; i++) {
-    let cls = '';
-    if (i < currentStep) cls = 'done';
-    else if (i === currentStep) cls = 'current';
-    html += `<div class="dot ${cls}"></div>`;
-  }
+  let html = '<div class="progress">';
+  for (let i = 0; i <= 6; i++) html += `<div class="dot ${i<currentStep?'done':''} ${i===currentStep?'current':''}"></div>`;
   html += '</div>';
 
-  // Render steps up to currentStep
   for (let i = 0; i <= currentStep && i < traceSteps.length; i++) {
     const s = traceSteps[i];
     if (s.type === 'task') {
-      html += `<div class="trace-block" style="background:var(--card);border:1px solid var(--border);border-left:3px solid var(--text);">
-        <div class="trace-label" style="color:var(--text);">📋 ${s.label}</div>
-        <div class="trace-content">${s.content}</div>
-      </div>`;
+      html += `<div class="trace-block" style="background:var(--card);border:1px solid var(--border);border-left:3px solid var(--text);"><div class="trace-label" style="color:var(--text);">📋 ${s.label}</div><div class="trace-content">${s.content}</div></div>`;
     } else {
       const cls = `trace-${s.type}`;
-      html += `<div class="trace-block ${cls}">
-        <div class="trace-label">${s.type==='thought'?'💭':'🔧'} ${s.label}</div>
-        <div class="trace-content">${s.content}</div>`;
-
-      if (s.toolDetail) {
-        const td = s.toolDetail;
-        html += `<div class="tool-call">
-          <div class="fn">${td.fn}</div>
-          <div class="params">参数: ${JSON.stringify(td.params)}</div>
-          <div class="result">${td.result}</div>
-        </div>`;
-      }
-
+      html += `<div class="trace-block ${cls}"><div class="trace-label">${s.type==='thought'?'💭':'🔧'} ${s.label}</div><div class="trace-content">${s.content}</div>`;
+      if (s.toolDetail) html += `<div class="tool-call"><div class="fn">${s.toolDetail.fn}</div><div class="result">${s.toolDetail.result}</div></div>`;
       html += '</div>';
     }
   }
-
   root.innerHTML = html;
 
-  // Summary after final step
-  document.getElementById('summary').innerHTML = currentStep >= traceSteps.length - 1 ? `
+  document.getElementById('summary').innerHTML = currentStep >= traceSteps.length-1 ? `
     <div class="summary high">
       <div class="score">⚠ 极高风险 · 87/100</div>
-      <p style="margin-top:8px;">命中 3 条 AML 规则 &nbsp;|&nbsp; OFAC SDN 模糊命中(0.91) &nbsp;|&nbsp; 6账户资金闭环<br>
-      建议: 立即冻结账户 + 上报央行SAR + 人工确认制裁名单身份</p>
-      <div class="meta">历史案例匹配: SAR-2024-0872(相似度0.88) — 已确认洗钱</div>
-    </div>
-  ` : '';
+      <p style="margin-top:8px;font-size:0.85rem;">命中 3 条 AML 规则 &nbsp;|&nbsp; OFAC SDN 模糊命中(0.91) &nbsp;|&nbsp; 6账户资金闭环<br>建议: 立即冻结账户 + 上报央行SAR + 合规官确认制裁名单身份</p>
+      <div class="meta">历史案例匹配: SAR-2024-0872（相似度0.88）— 已确认洗钱</div>
+    </div>` : '';
 }
 
-function nextStep() {
-  if (currentStep < traceSteps.length - 1) { currentStep++; renderTrace(); }
-}
-function autoPlay() {
-  currentStep = -1; renderTrace();
-  if (interval) clearInterval(interval);
-  let i = 0;
-  interval = setInterval(() => {
-    if (i < traceSteps.length) { currentStep = i; renderTrace(); i++; }
-    else { clearInterval(interval); interval = null; }
-  }, 1000);
-}
-function reset() { currentStep = -1; if (interval) clearInterval(interval); renderTrace(); }
+function nextStep() { if(currentStep<traceSteps.length-1){currentStep++;renderTrace();} }
+function autoPlay(){ currentStep=-1;renderTrace(); if(interval)clearInterval(interval); let i=0; interval=setInterval(()=>{if(i<traceSteps.length){currentStep=i;renderTrace();i++;}else clearInterval(interval);},1000); }
+function reset(){ currentStep=-1;if(interval)clearInterval(interval);renderTrace(); }
 
-// Init
+function switchPage(idx) {
+  document.querySelectorAll('.page-nav button').forEach((b,i)=>b.classList.toggle('active',i===idx));
+  document.getElementById('page0').classList.toggle('active',idx===0);
+  document.getElementById('page1').classList.toggle('active',idx===1);
+}
+
 renderTrace();
-document.getElementById('controls').innerHTML = `
-  <div class="btn-row">
-    <button class="btn" onclick="autoPlay()">▶ 自动演示 (ReAct 推理链)</button>
-    <button class="btn accent" onclick="nextStep()">下一步 →</button>
-    <button class="btn" onclick="reset()" style="margin-left:auto;">↺ 重置</button>
-  </div>
-`;
+document.getElementById('controls').innerHTML = `<div class="btn-row"><button class="btn" onclick="autoPlay()">▶ 自动演示</button><button class="btn accent" onclick="nextStep()">下一步 →</button><button class="btn" onclick="reset()" style="margin-left:auto;">↺ 重置</button></div>`;
 </script>
 </body>
 </html>
