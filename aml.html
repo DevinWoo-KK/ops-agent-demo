@@ -125,12 +125,33 @@ body { background:var(--bg); color:var(--text); font-family:var(--font-sans); li
   <h2>反洗钱（AML）</h2>
   <p>洗钱分三个阶段：<strong>放置</strong>（现金进入银行）→ <strong>分层</strong>（多账户流转隐匿来源）→ <strong>整合</strong>（回流为合法资金）。银行的 AML 系统每天产生几千条告警，<strong style="color:var(--red);">99% 是误报</strong>。</p>
   <p><strong style="color:var(--green);">Agent 不是替代规则引擎，而是接在引擎后面</strong>——告警来了，自动调取关联交易、图谱分析资金链路、核查制裁名单、检索历史案例，给出可解释的判断。合规人员只复核标为"可疑"的案例。</p>
-</div>
 
-<div class="section">
-  <h2>为什么选择 ReAct Agent 而非纯规则引擎</h2>
-  <p>规则引擎只能处理已知模式，面对新型洗钱手法（如 NFT 洗钱、跨链混币）束手无策。<strong>LLM Agent 具备开放域推理能力</strong>，能根据语义理解发现规则未覆盖的可疑模式，同时保留规则引擎作为初筛，避免 Agent 资源浪费。</p>
-  <p style="color:var(--muted);font-size:0.8rem;">规则引擎处理 80% 已知告警（零 LLM 成本） → Agent 深度调查剩下 20% 的复杂/新型案例。</p>
+  <h3>传统反洗钱系统 vs 反洗钱 Agent</h3>
+  <div class="card-row">
+    <div class="card" style="border-left:3px solid var(--muted);">
+      <h4>传统规则引擎</h4>
+      <div class="detail">
+        · 单笔金额超阈值 → 告警<br>
+        · 与黑名单账户交易 → 告警<br>
+        · 短期高频交易 → 告警<br>
+        · 规则固定，无法应对新型手法<br>
+        · <strong style="color:var(--red);">99% 误报率</strong>，人工淹没在假警报中<br>
+        · 每笔告警需人工登录多个系统调查
+      </div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--green);">
+      <h4>AML Agent</h4>
+      <div class="detail">
+        · 自动调取关联交易 + 客户画像<br>
+        · 图谱分析资金链路，发现闭环/社区<br>
+        · 核查 OFAC/UN 制裁名单（模糊匹配）<br>
+        · <strong style="color:var(--green);">LLM 开放域推理</strong>，发现规则未覆盖的新模式<br>
+        · 检索历史案例交叉验证<br>
+        · 自动生成 SAR 报告草稿
+      </div>
+    </div>
+  </div>
+  <p style="color:var(--muted);font-size:0.8rem;margin-top:4px;">规则引擎处理 80% 已知告警（零 LLM 成本） → Agent 深度调查剩下 20% 的复杂/新型案例。</p>
 </div>
 
 <div class="section"><h2>整体架构</h2><p style="font-size:0.8rem;color:var(--muted);margin-bottom:16px;">点击各层展开/折叠。点击子卡片查看详细信息。</p>
