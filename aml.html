@@ -346,6 +346,9 @@ body { background:var(--bg); color:var(--text); font-family:var(--font-sans); li
 
   <h3>如何控制 Agent 的幻觉风险？</h3>
   <p>所有结论必须有工具调用的实际数据支撑，禁止 Agent 在没有工具返回结果的情况下编造数据。通过 Prompt 约束要求 Agent 明确区分<strong style="color:var(--green);">「已证实事实」</strong>与<strong style="color:var(--red);">「推断/假设」</strong>，并在 SAR 报告中分别标注。</p>
+
+  <h3>为什么选择 ReAct 而非纯规则引擎？</h3>
+  <p>规则引擎只能处理已知模式，面对新型洗钱手法（如 NFT 洗钱、跨链混币）束手无策。<strong>LLM Agent 具备开放域推理能力</strong>，能根据语义理解发现规则未覆盖的可疑模式，同时保留规则引擎作为初筛，避免 Agent 资源浪费。</p>
 </div>
 
 </div><!-- /page0 -->
