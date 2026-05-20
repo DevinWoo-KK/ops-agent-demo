@@ -88,7 +88,9 @@ body { background:var(--bg); color:var(--text); font-family:var(--font-sans); li
 
 .summary { margin-top:20px; padding:16px; border-radius:8px; }
 .summary.high { background:#fef5f5; border:2px solid #f5c6c6; }
-.summary .score { font-size:2rem; font-weight:700; color:var(--red); }
+.scenario-tab.active { color:var(--text); font-weight:600; }
+.scenario-tab.active::after { content:''; position:absolute; bottom:-1px; left:0; right:0; height:2px; background:var(--accent); }
+.scenario-tab:hover { color:var(--text); }
 
 .btn-row { display:flex; gap:8px; margin-top:12px; }
 .btn { padding:8px 20px; border:1px solid var(--text); background:transparent; color:var(--text); font-family:var(--font-mono); font-size:0.8rem; cursor:pointer; }
@@ -356,7 +358,15 @@ body { background:var(--bg); color:var(--text); font-family:var(--font-sans); li
 <!-- ═══════════ PAGE 2 ═══════════ -->
 <div id="page1" class="page">
 <div class="section"><h2>Demo 演示</h2>
-<p>账户 ACC-88812 触发大额现金交易预警。Agent 启动 ReAct 调查循环。</p>
+<p>选择场景，Agent 启动 ReAct 调查循环，逐步调用工具收集证据。</p>
+
+<div style="display:flex;gap:0;margin-bottom:16px;border-bottom:1px solid var(--border);">
+  <button class="scenario-tab active" onclick="switchScenario(0)" style="flex:1;padding:10px 12px;border:none;background:transparent;cursor:pointer;font-family:var(--font-mono);font-size:0.72rem;color:var(--muted);position:relative;">场景1 · 拆分交易</button>
+  <button class="scenario-tab" onclick="switchScenario(1)" style="flex:1;padding:10px 12px;border:none;background:transparent;cursor:pointer;font-family:var(--font-mono);font-size:0.72rem;color:var(--muted);position:relative;">场景2 · 贸易洗钱</button>
+  <button class="scenario-tab" onclick="switchScenario(2)" style="flex:1;padding:10px 12px;border:none;background:transparent;cursor:pointer;font-family:var(--font-mono);font-size:0.72rem;color:var(--muted);position:relative;">场景3 · 壳公司网络</button>
+  <button class="scenario-tab" onclick="switchScenario(3)" style="flex:1;padding:10px 12px;border:none;background:transparent;cursor:pointer;font-family:var(--font-mono);font-size:0.72rem;color:var(--muted);position:relative;">场景4 · 快速分层</button>
+</div>
+
 <div id="trace-root"></div><div id="controls"></div><div id="summary"></div></div>
 </div>
 
@@ -395,37 +405,134 @@ function toggleSub(id) {
 }
 
 // ══ Demo (page 2) ══
-const traceSteps = [
-  { type:"task", label:"TASK", content:"账户 ACC-88812 触发规则 R-001（大额现金交易）预警，Agent 启动深度调查。" },
-  { type:"thought", label:"THOUGHT", content:"首先查询 ACC-88812 近30天交易流水，了解交易模式基线。" },
-  { type:"action", label:"ACTION", content:"transaction_query(account_id=\"ACC-88812\", start_date=\"2024-10-01\", end_date=\"2024-11-04\")",
-    toolDetail:{fn:"tool: transaction_query",result:"返回 17 笔交易，统计摘要:\n· 总流入: ¥241,500（7笔现金存入）\n· 总流出: ¥833,000（10笔转账）\n· 对手方: 5个\n· 近7日日均笔数: 2.4（90日均值 0.3 → 突增 8.0x）\n· 现金金额区间: ¥46,000-51,000（均略低于 ¥50,000 大额线）\n· 现金存入网点: 4个不同支行（天河/越秀/海珠/荔湾）"}},
-  { type:"thought", label:"THOUGHT", content:"交易模式异常：多网点、集中金额区间、频率突增8倍。调用规则引擎检查命中哪些 AML 规则。" },
-  { type:"action", label:"ACTION", content:"rule_engine(account_id=\"ACC-88812\", rule_set=\"all\")",
-    toolDetail:{fn:"tool: rule_engine",result:"命中 3 条规则:\n\n✓ R-001 大额现金交易 — 5笔≥48K且<50K，疑似拆分规避报告线\n  法规: 《金融机构大额交易和可疑交易报告管理办法》第9条\n\n✓ R-002 分散转入集中转出 — 7笔小额分散存入后大额集中转出\n  法规: 银发[2018]163号\n\n✓ R-006 交易行为突变 — 近7日交易频率是历史基线 8.0 倍\n  法规: 银发[2018]163号"}},
-  { type:"thought", label:"THOUGHT", content:"已命中3条规则。需追踪资金链路，对 ACC-88812 做图谱分析。" },
-  { type:"action", label:"ACTION", content:"graph_analysis(account_id=\"ACC-88812\", depth=3, type=\"cycle/community\")",
-    toolDetail:{fn:"tool: graph_analysis",result:"【资金闭环路径】\n1. ACC-88812→ACC-22301→ACC-55029→ACC-88812\n   3跳闭环，¥180,000，3天内完成\n\n2. ACC-88812→ACC-71102→ACC-30045→ACC-11208→ACC-88812\n   4跳闭环，¥320,000，2天内完成\n\n【共享身份】\n· ACC-88812/ACC-55029/ACC-11208 → 同一人(张某·CUST-4201)\n· ACC-22301(李某)与ACC-30045(王某) → 共享手机号\n\n【社区检测】6账户资金网络，模块度 Q=0.87（强社区结构）"}},
-  { type:"thought", label:"THOUGHT", content:"资金闭环+共享身份→高度可疑。核查制裁名单。" },
-  { type:"action", label:"ACTION", content:"sanction_check(account_id=\"ACC-88812\")",
-    toolDetail:{fn:"tool: sanction_check",result:"⚠ 模糊命中（相似度 0.91）\n名单: OFAC SDN List\n姓名: Zhang XX（模糊匹配 \"张某\"）\nID片段: 440************235\n原因: 涉嫌跨境毒品资金链\n置信度: 0.91 → 需人工确认身份"}},
-  { type:"thought", label:"THOUGHT", content:"证据充分。综合评分 + 检索历史案例交叉验证。" },
-  { type:"action", label:"ACTION", content:"risk_scorer(account_id=\"ACC-88812\")",
-    toolDetail:{fn:"tool: risk_scorer",result:"综合评分: 87 / 100 → 极高风险\n分项: 行为异常度 36/40 · 关联风险 23/25 · 黑名单 18/20 · 历史违规 10/15"}},
-  { type:"action", label:"ACTION", content:"case_retrieval(query=\"个体工商户 现金存入 分散转出 多层账户 闭环流转\")",
-    toolDetail:{fn:"tool: case_retrieval",result:"Top-1 相似案例 (余弦相似度 0.88):\nSAR-2024-0872 | 确认洗钱\n个体工商户大量现金存入→分散转出→多层账户→境外\n处理: 账户冻结、上报央行、罚款50万、追缴违法所得"}},
-  { type:"final", label:"FINAL", content:"═══════════════════════════════════════\n调查结论 — 账户 ACC-88812（张某）\n═══════════════════════════════════════\n\n风险评级: 极高 (87/100)\n命中规则: R-001 / R-002 / R-006\n制裁: OFAC SDN 模糊命中(0.91)\n历史: 与已确认洗钱案例相似度 0.88\n\n洗钱阶段: 放置(现金存入)→分层(多账户流转)→整合(闭环回流)\n\n建议: 立即冻结 ACC-88812 及5个关联账户 · 上报央行SAR · 合规官确认制裁身份" }
+const SCENARIOS = [
+  // Scenario 0: 拆分交易 (existing)
+  [
+    { type:"task", label:"TASK", content:"账户 ACC-88812 触发规则 R-001（大额现金交易）预警，Agent 启动深度调查。" },
+    { type:"thought", label:"THOUGHT", content:"首先查询 ACC-88812 近30天交易流水，了解交易模式基线。" },
+    { type:"action", label:"ACTION", content:"transaction_query(account_id=\"ACC-88812\", start_date=\"2024-10-01\", end_date=\"2024-11-04\")",
+      toolDetail:{fn:"tool: transaction_query",result:"返回 17 笔交易，统计摘要:\n· 总流入: ¥241,500（7笔现金存入）\n· 总流出: ¥833,000（10笔转账）\n· 对手方: 5个\n· 近7日日均笔数: 2.4（90日均值 0.3 → 突增 8.0x）\n· 现金金额区间: ¥46,000-51,000（均略低于 ¥50,000 大额线）\n· 现金存入网点: 4个不同支行（天河/越秀/海珠/荔湾）"}},
+    { type:"thought", label:"THOUGHT", content:"交易模式异常：多网点、集中金额区间、频率突增8倍。调用规则引擎检查命中哪些 AML 规则。" },
+    { type:"action", label:"ACTION", content:"rule_engine(account_id=\"ACC-88812\", rule_set=\"all\")",
+      toolDetail:{fn:"tool: rule_engine",result:"命中 3 条规则:\n\n✓ R-001 大额现金交易 — 5笔≥48K且<50K，疑似拆分规避报告线\n  法规: 《金融机构大额交易和可疑交易报告管理办法》第9条\n\n✓ R-002 分散转入集中转出 — 7笔小额分散存入后大额集中转出\n  法规: 银发[2018]163号\n\n✓ R-006 交易行为突变 — 近7日交易频率是历史基线 8.0 倍\n  法规: 银发[2018]163号"}},
+    { type:"thought", label:"THOUGHT", content:"已命中3条规则。需追踪资金链路，对 ACC-88812 做图谱分析。" },
+    { type:"action", label:"ACTION", content:"graph_analysis(account_id=\"ACC-88812\", depth=3, type=\"cycle/community\")",
+      toolDetail:{fn:"tool: graph_analysis",result:"【资金闭环路径】\n1. ACC-88812→ACC-22301→ACC-55029→ACC-88812\n   3跳闭环，¥180,000，3天内完成\n\n2. ACC-88812→ACC-71102→ACC-30045→ACC-11208→ACC-88812\n   4跳闭环，¥320,000，2天内完成\n\n【共享身份】\n· ACC-88812/ACC-55029/ACC-11208 → 同一人(张某·CUST-4201)\n· ACC-22301(李某)与ACC-30045(王某) → 共享手机号\n\n【社区检测】6账户资金网络，模块度 Q=0.87（强社区结构）"}},
+    { type:"thought", label:"THOUGHT", content:"资金闭环+共享身份→高度可疑。核查制裁名单。" },
+    { type:"action", label:"ACTION", content:"sanction_check(account_id=\"ACC-88812\")",
+      toolDetail:{fn:"tool: sanction_check",result:"⚠ 模糊命中（相似度 0.91）\n名单: OFAC SDN List\n姓名: Zhang XX（模糊匹配 \"张某\"）\nID片段: 440************235\n原因: 涉嫌跨境毒品资金链\n置信度: 0.91 → 需人工确认身份"}},
+    { type:"thought", label:"THOUGHT", content:"证据充分。综合评分 + 检索历史案例交叉验证。" },
+    { type:"action", label:"ACTION", content:"risk_scorer(account_id=\"ACC-88812\")",
+      toolDetail:{fn:"tool: risk_scorer",result:"综合评分: 87 / 100 → 极高风险\n分项: 行为异常度 36/40 · 关联风险 23/25 · 黑名单 18/20 · 历史违规 10/15"}},
+    { type:"action", label:"ACTION", content:"case_retrieval(query=\"个体工商户 现金存入 分散转出 多层账户 闭环流转\")",
+      toolDetail:{fn:"tool: case_retrieval",result:"Top-1 相似案例 (余弦相似度 0.88):\nSAR-2024-0872 | 确认洗钱\n个体工商户大量现金存入→分散转出→多层账户→境外\n处理: 账户冻结、上报央行、罚款50万、追缴违法所得"}},
+    { type:"final", label:"FINAL", content:"═══════════════════════════════════════\n调查结论 — 账户 ACC-88812（张某）\n═══════════════════════════════════════\n\n风险评级: 极高 (87/100) | 命中规则: R-001/R-002/R-006\n制裁: OFAC SDN 模糊命中(0.91)\n洗钱阶段: 放置(现金存入)→分层(多账户)→整合(闭环)\n\n建议: 冻结 ACC-88812 及5关联账户 · 上报央行SAR · 合规官确认制裁身份" }
+  ],
+  // Scenario 1: 贸易洗钱
+  [
+    { type:"task", label:"TASK", content:"企业账户 ENT-55012 触发规则 R-007（跨境大额汇款）预警。该企业为外贸公司，注册资本仅50万，但近3月跨境汇款累计超 ¥8,600万。" },
+    { type:"thought", label:"THOUGHT", content:"先查询该企业账户近90天交易流水，对比其注册信息和经营规模。" },
+    { type:"action", label:"ACTION", content:"transaction_query(account_id=\"ENT-55012\", start_date=\"2024-08-01\", end_date=\"2024-11-01\")",
+      toolDetail:{fn:"tool: transaction_query",result:"返回 42 笔交易，统计摘要:\n· 跨境汇入: 23笔，合计 ¥52,300,000（来源: 香港、新加坡、BVI）\n· 跨境汇出: 19笔，合计 ¥33,800,000（去向: 香港、阿联酋）\n· 对手方: 仅6家企业，其中4家注册地相同(香港湾仔)\n· 企业注册资本: ¥500,000（成立仅14个月）\n· 月均交易量: ¥28,700,000（远超同行业规模企业均值 ¥800,000）\n· 交易附言多为\"设备采购款\"\"技术服务费\"，但企业官网无技术人员"}},
+    { type:"thought", label:"THOUGHT", content:"交易量远超经营规模，对手方集中在避税港。调用规则引擎+舆情搜索。" },
+    { type:"action", label:"ACTION", content:"rule_engine(account_id=\"ENT-55012\", rule_set=\"all\")",
+      toolDetail:{fn:"tool: rule_engine",result:"命中 4 条规则:\n\n✓ R-007 跨境大额汇款 — 单月跨境交易¥2800万，远超同类企业基线\n  法规: 银发[2018]163号\n\n✓ R-008 空壳公司特征 — 注册资本与实际交易量严重不匹配(50万 vs 8600万)\n  法规: FATF 40条建议·第24条\n\n✓ R-009 交易对手集中 — 6家对手方中4家同址(香港湾仔)\n  法规: 银发[2016]285号\n\n✓ R-010 虚假贸易嫌疑 — 交易附言含\"设备采购\"但企业无实体经营场所\n  法规: 《反洗钱法》第22条"}},
+    { type:"thought", label:"THOUGHT", content:"规则命中多条，需图谱分析追踪资金最终去向。" },
+    { type:"action", label:"ACTION", content:"graph_analysis(account_id=\"ENT-55012\", depth=3, type=\"path\")",
+      toolDetail:{fn:"tool: graph_analysis",result:"【资金链路追踪】\n香港汇入→ENT-55012→3笔拆分→阿联酋2家贸易公司\n  └ 其中1家阿联酋公司董事与香港公司股东同名\n\n【共享特征】\n· 4家香港对手方注册代理为同一家秘书公司\n· ENT-55012 法人同时是其中2家香港公司的名义股东\n\n【路径模式】跨境汇入→境内短暂停留(≤48h)→汇出境外\n  符合\"贸易洗钱\"典型特征：虚构贸易背景，资金快进快出"}},
+    { type:"thought", label:"THOUGHT", content:"资金链路清晰，核查制裁名单+舆情。" },
+    { type:"action", label:"ACTION", content:"sanction_check(name=\"香港湾仔4家对手方企业\")",
+      toolDetail:{fn:"tool: sanction_check",result:"未直接命中制裁名单。\n但1家阿联酋对手方曾出现在FATF高风险地区关联交易警告中（2023年）。"}},
+    { type:"action", label:"ACTION", content:"news_search(entity_name=\"ENT-55012 法人代表\")",
+      toolDetail:{fn:"tool: news_search",result:"⚠ 负面舆情:\n· 2024年6月, 法人代表名下另一家公司被市场监管列入经营异常\n· 2024年9月, 该法人被列入限制出境名单（原因: 涉及经济纠纷）"}},
+    { type:"thought", label:"THOUGHT", content:"证据充分。综合评分。" },
+    { type:"action", label:"ACTION", content:"risk_scorer(account_id=\"ENT-55012\")",
+      toolDetail:{fn:"tool: risk_scorer",result:"综合评分: 79 / 100 → 高风险\n分项: 行为异常度 34/40 · 关联风险 21/25 · 黑名单 8/20 · 历史违规 16/15\n\n特别标注: 历史违规分超满分（15/15+1），因法人存在限制出境记录"}},
+    { type:"final", label:"FINAL", content:"═══════════════════════════════════════\n调查结论 — 企业 ENT-55012\n═══════════════════════════════════════\n\n风险评级: 高风险 (79/100) | 命中规则: R-007/R-008/R-009/R-010\n洗钱手法: 贸易洗钱 — 虚构进口贸易背景，资金经香港→境内→阿联酋\n法人限制出境 + 对手方同址 + 交易量远超经营规模\n\n建议: 冻结账户 · 上报央行SAR · 通报海关核查相关贸易单据" }
+  ],
+  // Scenario 2: 壳公司网络
+  [
+    { type:"task", label:"TASK", content:"5个新开企业对公账户在48小时内同时触发规则 R-004（短期内与>20个新对手方交易）预警。开户时间集中在同一周，注册地址均为虚拟园区。" },
+    { type:"thought", label:"THOUGHT", content:"先分别查询这5个账户的交易流水，看是否有共同特征。" },
+    { type:"action", label:"ACTION", content:"transaction_query(account_id=\"ENT-77101..77105\", start_date=\"2024-10-20\", end_date=\"2024-11-04\")",
+      toolDetail:{fn:"tool: transaction_query",result:"5个账户综合统计:\n· 总交易笔数: 387笔（15天内）\n· 总流入: ¥47,200,000\n· 总流出: ¥46,800,000\n· 净留存: 仅 ¥400,000（不到1%）\n· 对手方: 83个，其中71个为个人账户\n· 交易模式: 每笔¥50,000-200,000分散转入，集中转出至6个个人账户\n· 5个账户开户时间: 2024-10-15至10-20（同一周内）\n· 注册地址: 均为\"XX区虚拟产业园A座\"（同一地址）\n· 法人代表: 5人，其中3人身份证号前6位相同（同县）"}},
+    { type:"thought", label:"THOUGHT", content:"5个账户高度同构——交易模式、注册地址、法人关联均一致。图谱分析资金网络。" },
+    { type:"action", label:"ACTION", content:"graph_analysis(account_id=\"ENT-77101\", depth=3, type=\"community\")",
+      toolDetail:{fn:"tool: graph_analysis",result:"【社区检测】\n83个对手方形成3层资金网络:\n\nL1(5企业): ENT-77101~77105，资金入口层\nL2(71个人): 分散转入节点，人均接收¥660,000\nL3(6个人): 集中归集节点，人均接收¥7,800,000\n\n【关键发现】\n· L3的6个个人账户全部在境外ATM取现（澳门、香港）\n· 5个企业法人代表中3人来自同一乡镇\n· 资金流向: 企业→71人分散→6人集中→境外取现\n· 模块度 Q=0.92（极强社区结构）"}},
+    { type:"thought", label:"THOUGHT", content:"典型的\"分散-集中-出境\"模式。核查黑名单和舆情。" },
+    { type:"action", label:"ACTION", content:"sanction_check(entities=\"5企业法人+6归集账户持有人\")",
+      toolDetail:{fn:"tool: sanction_check",result:"11人中:\n· 2人在国内涉案人员数据库中（涉电信诈骗前科）\n· 1人为PEP（地方人大代表亲属）\n· 其余8人无记录"}},
+    { type:"action", label:"ACTION", content:"news_search(entity_name=\"XX区虚拟产业园\")",
+      toolDetail:{fn:"tool: news_search",result:"⚠ 该虚拟产业园2024年已被警方通报:\n\"XX区虚拟产业园A座\"涉及多起电信诈骗洗钱案件\n2024年8月有3家同址企业被冻结账户"}},
+    { type:"thought", label:"THOUGHT", content:"证据链完整：同构账户+虚拟园区+境外取现+前科人员。评分。" },
+    { type:"action", label:"ACTION", content:"risk_scorer(entities=\"ENT-77101~77105\")",
+      toolDetail:{fn:"tool: risk_scorer",result:"综合评分: 94 / 100 → 极高风险\n分项: 行为异常度 38/40 · 关联风险 25/25 · 黑名单 16/20 · 历史违规 15/15\n\n特别标注: 关联风险满分——5账户全同构+83对手方三级网络"}},
+    { type:"final", label:"FINAL", content:"═══════════════════════════════════════\n调查结论 — ENT-77101~77105 壳公司网络\n═══════════════════════════════════════\n\n风险评级: 极高 (94/100) | 命中规则: R-004/R-008/R-009\n洗钱手法: 壳公司网络 — 虚拟园区批量注册→71人分散转入→6人集中归集→境外ATM取现\n前科人员参与 + 已知涉案地址 + 15天¥4700万\n\n建议: 立即冻结全部5个企业账户及6个归集账户 · 上报央行SAR · 通报公安机关" }
+  ],
+  // Scenario 3: 快速分层转账
+  [
+    { type:"task", label:"TASK", content:"个人账户 ACC-33902 触发规则 R-011（单日交易对手>30个）预警。该账户近24小时内向42个不同账户转出小额资金，疑似\"smurfing\"分发层。" },
+    { type:"thought", label:"THOUGHT", content:"查询该账户近7天交易流水，重点关注转入来源和转出去向。" },
+    { type:"action", label:"ACTION", content:"transaction_query(account_id=\"ACC-33902\", start_date=\"2024-10-28\", end_date=\"2024-11-04\")",
+      toolDetail:{fn:"tool: transaction_query",result:"返回 89 笔交易（7天内）:\n· 转入: 3笔，合计 ¥920,000\n  └ 来源: 企业账户 ENT-55012（同日分3笔转入）\n· 转出: 86笔，合计 ¥918,500\n  └ 去向: 86个个人账户（遍布全国18个省份）\n  └ 每笔金额: ¥5,000-20,000（均低于¥20,000监控线）\n· 转入→转出时间间隔: 平均 2.3 小时\n· 86个收款人中有31人开户行在边远地区（云南/广西边境）\n· 转账附言: 多为\"工资\"\"劳务费\"\"报销\"但收款人互不认识"}},
+    { type:"thought", label:"THOUGHT", content:"资金快进快出且来源为企业账户 ENT-55012（已在场景2标记为高风险）。交叉验证。" },
+    { type:"action", label:"ACTION", content:"graph_analysis(account_id=\"ACC-33902\", depth=2, type=\"path\")",
+      toolDetail:{fn:"tool: graph_analysis",result:"【关联发现】\n⚠ ENT-55012（贸易洗钱企业）→ACC-33902→86个个人账户\n\n【层级分析】\nL1: ENT-55012（资金来源——已在场景2标记高风险）\nL2: ACC-33902（分发层——快进快出）\nL3: 86个个人账户（最终层——小额分散，31个在边境地区）\n\n此链路验证了场景2的结论: 跨境资金→壳公司→分发账户→边境提现"}},
+    { type:"thought", label:"THOUGHT", content:"跨案件关联成立。核查86个收款人中的高风险账户。" },
+    { type:"action", label:"ACTION", content:"sanction_check(entities=\"31个边境地区收款人\")",
+      toolDetail:{fn:"tool: sanction_check",result:"31人中:\n· 3人命中涉案人员数据库（涉电信诈骗/网络赌博）\n· 2人存在多次出入境记录（频繁往返中缅边境）\n· 1人账户曾在2023年被警方冻结后解封"}},
+    { type:"action", label:"ACTION", content:"rule_engine(account_id=\"ACC-33902\", rule_set=\"all\")",
+      toolDetail:{fn:"tool: rule_engine",result:"命中 3 条规则:\n\n✓ R-002 分散转入集中转出（反向模式）— 集中转入后86笔分散转出\n  法规: 银发[2018]163号\n\n✓ R-004 短期内多新户交易 — 7天内与86个对手方交易\n  法规: 银发[2016]285号\n\n✓ R-011 边境地区关联 — 31个收款人在云南/广西边境\n  法规: 银发[2020]105号"}},
+    { type:"thought", label:"THOUGHT", content:"评分，并与 ENT-55012 案件合并处理。" },
+    { type:"action", label:"ACTION", content:"risk_scorer(account_id=\"ACC-33902\", linked_cases=\"ENT-55012\")",
+      toolDetail:{fn:"tool: risk_scorer",result:"综合评分: 91 / 100 → 极高风险\n分项: 行为异常度 37/40 · 关联风险 25/25 · 黑名单 14/20 · 历史违规 15/15\n\n关联案件: ENT-55012（贸易洗钱·高风险·79分）\n合并评分: 93/100（两案关联后风险叠加）"}},
+    { type:"final", label:"FINAL", content:"═══════════════════════════════════════\n调查结论 — ACC-33902（分发层账户）\n═══════════════════════════════════════\n\n风险评级: 极高 (91/100) | 合并评分: 93/100\n命中规则: R-002/R-004/R-011\n洗钱阶段: 分层 — 将大额资金拆分成86笔小额，经边境账户提现\n\n关联案件: ENT-55012（贸易洗钱）— 两个案件共享同一资金源头\n完整链路: 境外→壳公司→分发账户→86人→边境ATM取现\n\n建议: 冻结 ACC-33902 + 86收款账户 · 与 ENT-55012 并案上报央行 · 通报公安反诈中心" }
+  ]
 ];
 
+const finalSummaries = [
+  { score:"87", label:"极高风险", rules:"R-001/R-002/R-006", extra:"OFAC模糊命中(0.91)", advice:"冻结 + 上报央行SAR" },
+  { score:"79", label:"高风险", rules:"R-007/R-008/R-009/R-010", extra:"法人限制出境", advice:"冻结 + 上报SAR + 通报海关" },
+  { score:"94", label:"极高风险", rules:"R-004/R-008/R-009", extra:"涉案地址 · 前科人员", advice:"冻结11账户 + 上报央行 + 通报公安" },
+  { score:"91", label:"极高风险", rules:"R-002/R-004/R-011", extra:"关联ENT-55012 · 合并93分", advice:"冻结87账户 · 并案上报" },
+];
+
+let currentScenarioIdx = 0;
 let currentStep = -1, interval = null;
 
+function switchScenario(idx) {
+  currentScenarioIdx = idx;
+  currentStep = -1;
+  if (interval) clearInterval(interval);
+  document.querySelectorAll('.scenario-tab').forEach((b,i) => b.classList.toggle('active', i===idx));
+  renderTrace();
+}
+
+function nextStep() {
+  const steps = SCENARIOS[currentScenarioIdx];
+  if (currentStep < steps.length - 1) { currentStep++; renderTrace(); }
+}
+function autoPlay() {
+  currentStep = -1; renderTrace();
+  if (interval) clearInterval(interval);
+  let i = 0;
+  const steps = SCENARIOS[currentScenarioIdx];
+  interval = setInterval(() => {
+    if (i < steps.length) { currentStep = i; renderTrace(); i++; }
+    else clearInterval(interval);
+  }, 1000);
+}
+function reset() { currentStep = -1; if (interval) clearInterval(interval); renderTrace(); }
+
 function renderTrace() {
+  const steps = SCENARIOS[currentScenarioIdx];
   const root = document.getElementById('trace-root');
+  const dotCount = Math.max(...SCENARIOS.map(s=>s.length));
   let html = '<div class="progress">';
-  for (let i = 0; i <= 6; i++) html += `<div class="dot ${i<currentStep?'done':''} ${i===currentStep?'current':''}"></div>`;
+  for (let i = 0; i < 8; i++) html += `<div class="dot ${i<currentStep?'done':''} ${i===currentStep?'current':''}"></div>`;
   html += '</div>';
-  for (let i = 0; i <= currentStep && i < traceSteps.length; i++) {
-    const s = traceSteps[i];
+  for (let i = 0; i <= currentStep && i < steps.length; i++) {
+    const s = steps[i];
     if (s.type === 'task') html += `<div class="trace-block" style="background:var(--card);border:1px solid var(--border);border-left:3px solid var(--text);"><div class="trace-label" style="color:var(--text);">📋 ${s.label}</div><div class="trace-content">${s.content}</div></div>`;
     else {
       html += `<div class="trace-block trace-${s.type}"><div class="trace-label">${s.type==='thought'?'💭':'🔧'} ${s.label}</div><div class="trace-content">${s.content}</div>`;
@@ -434,12 +541,9 @@ function renderTrace() {
     }
   }
   root.innerHTML = html;
-  document.getElementById('summary').innerHTML = currentStep >= traceSteps.length-1 ? `<div class="summary high"><div class="score">⚠ 极高风险 · 87/100</div><p style="margin-top:8px;font-size:0.85rem;">命中 3 条规则 | OFAC 模糊命中(0.91) | 6账户资金闭环<br>建议: 立即冻结 + 上报央行SAR + 合规官确认制裁身份</p></div>` : '';
+  const fs = finalSummaries[currentScenarioIdx];
+  document.getElementById('summary').innerHTML = currentStep >= steps.length - 1 ? `<div class="summary high"><div class="score">⚠ ${fs.label} · ${fs.score}/100</div><p style="margin-top:8px;font-size:0.85rem;">命中: ${fs.rules} | ${fs.extra}<br>建议: ${fs.advice}</p></div>` : '';
 }
-
-function nextStep() { if(currentStep<traceSteps.length-1){currentStep++;renderTrace();} }
-function autoPlay(){ currentStep=-1;renderTrace(); if(interval)clearInterval(interval); let i=0; interval=setInterval(()=>{if(i<traceSteps.length){currentStep=i;renderTrace();i++;}else clearInterval(interval);},1000); }
-function reset(){ currentStep=-1;if(interval)clearInterval(interval);renderTrace(); }
 
 renderTrace();
 document.getElementById('controls').innerHTML = `<div class="btn-row"><button class="btn" onclick="autoPlay()">▶ 自动演示</button><button class="btn accent" onclick="nextStep()">下一步 →</button><button class="btn" onclick="reset()" style="margin-left:auto;">↺ 重置</button></div>`;
