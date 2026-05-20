@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>金融IT运维Agent Demo | 华峻捷科面试</title>
+<style>
+:root {
+  --bg: #faf9f5;
+  --text: #141413;
+  --muted: #6b6b6b;
+  --accent: #d97757;
+  --card: #ffffff;
+  --border: #e8e5df;
+  --blue: #3b6fb6;
+  --green: #47d096;
+  --red: #e05555;
+  --yellow: #d9a845;
+  --code-bg: #f3f1ed;
+  --font-serif: 'Georgia', 'Times New Roman', serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'SF Mono', 'Menlo', 'Consolas', monospace;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--bg); color: var(--text); font-family: var(--font-sans); line-height: 1.6; }
+.container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+
+/* ── Hero ── */
+.hero { padding: 40px 0 30px; text-align: center; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+.hero h1 { font-family: var(--font-serif); font-size: 2.2rem; font-weight: 400; margin-bottom: 8px; }
+.hero .sub { color: var(--muted); font-size: 1rem; }
+.hero .tags { margin-top: 16px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.tag { background: var(--code-bg); padding: 4px 12px; border-radius: 0; font-size: 0.8rem; color: var(--muted); font-family: var(--font-mono); }
+
+/* ── Page Nav ── */
+.page-nav { display: flex; gap: 0; margin-bottom: 32px; border-bottom: 1px solid var(--border); }
+.page-nav button { flex: 1; padding: 14px 20px; border: none; background: transparent; cursor: pointer; font-family: var(--font-serif); font-size: 1.05rem; color: var(--muted); transition: all 0.2s; position: relative; }
+.page-nav button:hover { color: var(--text); }
+.page-nav button.active { color: var(--text); font-weight: 600; }
+.page-nav button.active::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background: var(--accent); }
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── Sections ── */
+.section { margin-bottom: 56px; }
+.section h2 { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 1px solid var(--border); color: var(--accent); }
+.section h3 { font-size: 1rem; font-weight: 600; margin: 24px 0 12px; color: var(--text); }
+.section p { margin-bottom: 12px; color: #3a3a3a; }
+.section ul { margin: 12px 0 12px 20px; color: #3a3a3a; }
+.section li { margin-bottom: 6px; }
+
+/* ── Cards ── */
+.card-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 20px 0; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+.card h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; font-family: var(--font-mono); color: var(--blue); }
+.card .val { font-family: var(--font-mono); font-size: 1.6rem; font-weight: 300; margin: 8px 0; }
+.card .unit { font-size: 0.8rem; color: var(--muted); }
+.card .detail { font-size: 0.8rem; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+.card.warn { border-left: 3px solid var(--yellow); }
+.card.critical { border-left: 3px solid var(--red); }
+.card.ok { border-left: 3px solid var(--green); }
+
+/* ── Architecture Flow ── */
+.flow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; margin: 24px 0; padding: 20px; background: var(--code-bg); border-radius: 8px; }
+.flow-step { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 20px; text-align: center; font-family: var(--font-mono); font-size: 0.85rem; }
+.flow-step .icon { font-size: 1.4rem; margin-bottom: 4px; }
+.flow-arrow { color: var(--muted); font-size: 1.2rem; }
+
+/* ── Demo Area ── */
+.scenario-nav { display: flex; gap: 0; margin-bottom: 0; }
+.scenario-btn { flex: 1; padding: 12px; border: 1px solid var(--border); border-bottom: none; background: var(--code-bg); cursor: pointer; font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); transition: all 0.2s; }
+.scenario-btn:first-child { border-radius: 8px 0 0 0; }
+.scenario-btn:last-child { border-radius: 0 8px 0 0; }
+.scenario-btn.active { background: var(--card); color: var(--text); font-weight: 600; border-bottom: 2px solid var(--accent); }
+.scenario-body { background: var(--card); border: 1px solid var(--border); border-radius: 0 0 8px 8px; padding: 24px; }
+.device-bar { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--code-bg); border-radius: 6px; margin-bottom: 20px; font-family: var(--font-mono); font-size: 0.8rem; }
+.device-bar .label { color: var(--muted); }
+.alert-badge { padding: 3px 10px; border-radius: 0; font-size: 0.75rem; font-weight: 600; font-family: var(--font-mono); }
+.alert-warn { background: #fef3cd; color: #856404; }
+.alert-critical { background: #fde8e8; color: #a71d2a; }
+
+.step-log { margin-top: 16px; }
+.step { margin-bottom: 16px; border-left: 2px solid var(--border); padding-left: 16px; }
+.step.active { border-left-color: var(--accent); }
+.step-header { font-family: var(--font-mono); font-size: 0.8rem; font-weight: 600; margin-bottom: 6px; color: var(--muted); }
+.step.active .step-header { color: var(--accent); }
+.step-content { font-size: 0.85rem; color: #3a3a3a; }
+.step-content .evidence { margin: 6px 0 6px 16px; font-size: 0.8rem; color: var(--muted); }
+.step-content .evidence li { margin-bottom: 3px; }
+.remediation-step { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-family: var(--font-mono); font-size: 0.8rem; }
+.remediation-step .check { color: var(--green); font-weight: bold; }
+
+/* ── Report ── */
+.report { margin-top: 24px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.report-header { background: var(--code-bg); padding: 16px 20px; font-family: var(--font-mono); font-size: 0.8rem; border-bottom: 1px solid var(--border); }
+.report-body { padding: 20px; font-size: 0.85rem; }
+.report-body table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+.report-body td { padding: 6px 10px; border-bottom: 1px solid var(--border); font-size: 0.8rem; }
+.report-body td:first-child { color: var(--muted); width: 120px; font-family: var(--font-mono); }
+
+/* ── Buttons ── */
+.btn { display: inline-block; padding: 8px 20px; border: 1px solid var(--text); background: transparent; color: var(--text); font-family: var(--font-mono); font-size: 0.8rem; cursor: pointer; border-radius: 0; }
+.btn:hover { background: var(--text); color: var(--bg); }
+.btn.accent { border-color: var(--accent); color: var(--accent); }
+.btn.accent:hover { background: var(--accent); color: #fff; }
+.btn-row { display: flex; gap: 8px; margin-top: 16px; }
+
+/* ── Skill grid ── */
+.skill-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 16px 0; }
+.skill-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+.skill-card .skill-name { font-family: var(--font-mono); font-size: 0.85rem; font-weight: 600; color: var(--blue); margin-bottom: 6px; }
+.skill-card .skill-meta { font-size: 0.75rem; color: var(--muted); line-height: 1.5; }
+
+/* ── Progress ── */
+.progress-bar { display: flex; gap: 4px; margin: 8px 0; }
+.progress-seg { flex: 1; height: 4px; background: var(--border); border-radius: 2px; }
+.progress-seg.done { background: var(--green); }
+
+/* ── Footer ── */
+.footer { text-align: center; padding: 40px 0; color: var(--muted); font-size: 0.8rem; border-top: 1px solid var(--border); margin-top: 60px; }
+
+@media (max-width: 600px) {
+  .hero h1 { font-size: 1.5rem; }
+  .flow { flex-direction: column; }
+  .flow-arrow { transform: rotate(90deg); }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- ═══════════ HERO ═══════════ -->
+<div class="hero">
+  <h1>金融IT运维 Agent</h1>
+  <p class="sub">华为生态 · 银行数据中心 · AI 自主运维</p>
+  <div class="tags">
+    <span class="tag">鲲鹏 TaiShan</span>
+    <span class="tag">GaussDB</span>
+    <span class="tag">OceanStor</span>
+    <span class="tag">Agent 感知→决策→执行</span>
+    <span class="tag">华峻捷科面试作品</span>
+  </div>
+</div>
+
+<!-- ═══════════ PAGE NAV ═══════════ -->
+<div class="page-nav">
+  <button class="active" onclick="switchPage(0)">设计说明</button>
+  <button onclick="switchPage(1)">Demo 演示</button>
+  <button onclick="switchPage(2)">差距与方案</button>
+</div>
+
+<!-- ═══════════ PAGE 1: 设计说明 ═══════════ -->
+<div id="page0" class="page active">
+
+<!-- ═══════════ 什么是金融IT运维 ═══════════ -->
+<div class="section">
+  <h2>什么是金融IT运维</h2>
+  <p>每次用手机银行转账，背后是 6 道工序、200 毫秒内完成、每天几千万次。任一环节故障 = <strong style="color:var(--red);">交易失败</strong>。</p>
+
+  <p style="text-align:center;font-family:var(--font-mono);font-size:0.82rem;margin:16px 0;">
+    <span style="display:inline-block;background:var(--card);border:1px solid var(--border);padding:4px 12px;border-radius:14px;margin:2px 4px;">手机App</span>
+    <span style="color:var(--muted);">→</span>
+    <span style="display:inline-block;background:var(--card);border:1px solid var(--border);padding:4px 12px;border-radius:14px;margin:2px 4px;">前置服务器</span>
+    <span style="color:var(--muted);">→</span>
+    <span style="display:inline-block;background:var(--card);border:1px solid var(--border);padding:4px 12px;border-radius:14px;margin:2px 4px;">交易系统</span>
+    <span style="color:var(--muted);">→</span>
+    <span style="display:inline-block;background:var(--card);border:1px solid var(--border);padding:4px 12px;border-radius:14px;margin:2px 4px;">数据库</span>
+    <span style="color:var(--muted);">→</span>
+    <span style="display:inline-block;background:var(--card);border:1px solid var(--border);padding:4px 12px;border-radius:14px;margin:2px 4px;">存储落盘</span>
+    <span style="color:var(--muted);">→</span>
+    <span style="display:inline-block;background:var(--card);border:1px solid var(--border);padding:4px 12px;border-radius:14px;margin:2px 4px;">对端清算</span>
+  </p>
+  <p><strong style="color:#3d9965;">金融IT运维就是保证这条链永远不断。</strong>磁盘满了、连接池耗尽了、存储I/O延迟飙了——任一环节故障，就是真金白银的损失和监管问责。</p>
+
+  <h3>三层设备，三层运维</h3>
+  <div class="card-row">
+    <div class="card">
+      <h4>鲲鹏 TaiShan 200</h4>
+      <div class="val">ARM 服务器</div>
+      <div class="detail">跑交易前置、Web服务、中间件<br>运维盯：CPU、内存、磁盘、日志</div>
+    </div>
+    <div class="card">
+      <h4>GaussDB</h4>
+      <div class="val">数据库</div>
+      <div class="detail">华为自研数据库，替代 Oracle<br>运维盯：连接池、慢查询、TPS、死锁</div>
+    </div>
+    <div class="card">
+      <h4>OceanStor Dorado</h4>
+      <div class="val">全闪存储</div>
+      <div class="detail">承载交易数据和文件系统<br>运维盯：I/O延迟、磁盘健康、RAID状态</div>
+    </div>
+  </div>
+
+  <h3>为什么需要 AI Agent</h3>
+  <div class="card-row">
+    <div class="card">
+      <h4>现在的痛点</h4>
+      <div class="detail">
+        · 告警风暴：每天几百条，99%是误报<br>
+        · 依赖专家：凌晨告警等人工响应<br>
+        · 处理不均：水平参差，漏判误判<br>
+        · 重复劳动：80%告警处理套路固定
+      </div>
+    </div>
+    <div class="card ok">
+      <h4>Agent 化的价值</h4>
+      <div class="detail">
+        · MTTD 从几十分钟→几秒<br>
+        · MTTR 从几小时→几分钟<br>
+        · 低级故障全自动处理<br>
+        · 人只处理真正复杂的场景
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ Agent 设计思路 ═══════════ -->
+<div class="section">
+  <h2>Agent 设计思路</h2>
+
+  <h3>核心循环</h3>
+  <div class="flow" style="padding:16px 24px;gap:10px;">
+    <div class="flow-step" style="padding:14px 36px;font-size:0.95rem;min-width:100px;"><div class="icon">📡</div>感知</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="padding:14px 36px;font-size:0.95rem;min-width:100px;"><div class="icon">🧠</div>分析</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="padding:14px 36px;font-size:0.95rem;min-width:100px;"><div class="icon">⚖️</div>决策</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="padding:14px 36px;font-size:0.95rem;min-width:100px;"><div class="icon">🔧</div>执行</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="padding:14px 36px;font-size:0.95rem;min-width:100px;"><div class="icon">📋</div>报告</div>
+  </div>
+
+  <div class="card-row" style="margin-top:12px;">
+    <div class="card">
+      <div class="skill-name">📡 感知 &nbsp;<span style="font-weight:400;color:var(--muted);">Monitor</span></div>
+      <div class="detail">实时采集鲲鹏、OceanStor、GaussDB 等多层设备指标。连续3-18次采样确认，排除传感器抖动和瞬时波动。</div>
+    </div>
+    <div class="card">
+      <div class="skill-name">🧠 分析 &nbsp;<span style="font-weight:400;color:var(--muted);">Analyze + LLM</span></div>
+      <div class="detail">LLM 多维数据推理，输出根因判断 + 3-5条证据链 + 影响评估 + 推荐操作。不是"磁盘满了就清理"。</div>
+    </div>
+    <div class="card">
+      <div class="skill-name">⚖️ 决策 &nbsp;<span style="font-weight:400;color:var(--muted);">Decide</span></div>
+      <div class="detail">Agent 自主判断：可自动执行 / 需人工确认 / 必须人工决策。三级分级，每级有明确的安全边界。</div>
+    </div>
+    <div class="card">
+      <div class="skill-name">🔧 执行 &nbsp;<span style="font-weight:400;color:var(--muted);">Remediate</span></div>
+      <div class="detail">自动执行修复操作：归档日志、调整配置、KILL 异常连接、通知业务方。每步记录结果，可回滚。</div>
+    </div>
+    <div class="card">
+      <div class="skill-name">📋 报告 &nbsp;<span style="font-weight:400;color:var(--muted);">Report</span></div>
+      <div class="detail">生成结构化事件报告：设备信息 + 告警详情 + 根因分析 + 修复记录 + 后续建议。满足金融监管审计要求。</div>
+    </div>
+  </div>
+
+  <h3>Skill 声明式体系</h3>
+  <p>每个Skill独立定义：触发条件、上下文依赖、工具链、输出规范、失败降级。<strong>声明式优先</strong>——让非技术人员也能理解和维护 Agent 行为。</p>
+  <div class="skill-grid">
+    <div class="skill-card">
+      <div class="skill-name">monitor</div>
+      <div class="skill-meta">触发: 定时采集/告警推送<br>依赖: 无<br>降级: 人工检查监控面板</div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-name">analyze</div>
+      <div class="skill-meta">触发: 异常检测<br>依赖: monitor<br>降级: 转人工专家分析</div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-name">remediate</div>
+      <div class="skill-meta">触发: 可自动修复<br>依赖: analyze<br>降级: 生成工单指派工程师</div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-name">report</div>
+      <div class="skill-meta">触发: 所有Skill完成<br>依赖: remediate<br>降级: 发送原始告警邮件</div>
+    </div>
+  </div>
+
+  <h3>自主决策的三级分级</h3>
+  <div class="card-row">
+    <div class="card ok">
+      <h4>全自动执行</h4>
+      <div class="detail">无风险操作——日志归档、配置调整、流量降级。Agent自主判断+执行。</div>
+    </div>
+    <div class="card warn">
+      <h4>部分人工确认</h4>
+      <div class="detail">中等风险——KILL数据库连接、调整连接池。Agent执行后需人工通知业务方。</div>
+    </div>
+    <div class="card critical">
+      <h4>必须人工决策</h4>
+      <div class="detail">高风险——RAID重建中断、灾备切换、涉及资金的操作。Agent只做分析和建议。</div>
+    </div>
+  </div>
+</div>
+</div><!-- /page0 -->
+
+<!-- ═══════════ PAGE 2: Demo ═══════════ -->
+<div id="page1" class="page">
+
+<!-- ═══════════ 可视化Demo ═══════════ -->
+<div class="section">
+  <h2>Demo 演示</h2>
+  <p>三个真实运维场景，模拟银行数据中心华为设备告警的自动处理全过程。</p>
+
+  <!-- Scenario Nav -->
+  <div class="scenario-nav">
+    <button class="scenario-btn active" onclick="switchScenario(0)">场景1<br><span style="font-size:0.7rem;color:var(--muted);">服务器运维</span></button>
+    <button class="scenario-btn" onclick="switchScenario(1)">场景2<br><span style="font-size:0.7rem;color:var(--muted);">数据库运维</span></button>
+    <button class="scenario-btn" onclick="switchScenario(2)">场景3<br><span style="font-size:0.7rem;color:var(--muted);">存储运维</span></button>
+  </div>
+
+  <div class="scenario-body" id="demo-body"></div>
+</div>
+
+</div><!-- /page1 -->
+
+<!-- ═══════════ PAGE 3: 差距与方案 ═══════════ -->
+<div id="page2" class="page">
+
+<div class="section">
+  <h2>Demo → 产品：差距与方案</h2>
+  <p>Demo 证明了架构可行。以下是推向生产环境需要解决的 6 个核心差距及解决方案。</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0;">
+
+    <!-- Gap 1 -->
+    <div class="card" style="border-left:3px solid var(--red);">
+      <h4>① 数据层：模拟 vs 真实监控</h4>
+      <div class="detail" style="font-size:0.78rem;">
+        <strong style="color:var(--red);">差距</strong><br>
+        Demo 数据是手写的 3 个场景。真实环境每天数百条告警，来自 Prometheus、Zabbix、华为 iMaster NCE 等多个系统，需要告警去重、聚合、定级。<br><br>
+        <strong style="color:var(--green);">方案</strong><br>
+        对接标准告警接口（Prometheus AlertManager API / 华为 iMaster 北向接口），规则引擎做第一层去重收敛，异常事件才进入 Agent 分析。
+      </div>
+    </div>
+
+    <!-- Gap 2 -->
+    <div class="card" style="border-left:3px solid var(--red);">
+      <h4>② 安全围栏：Agent 能做什么不能做什么</h4>
+      <div class="detail" style="font-size:0.78rem;">
+        <strong style="color:var(--red);">差距</strong><br>
+        Demo 中 Agent 可以直接 KILL 数据库连接、修改服务器配置。金融行业要求操作分级审批 + 堡垒机审计，不能有"自动化后门"。<br><br>
+        <strong style="color:var(--green);">方案</strong><br>
+        三级操作白名单：L1 只读操作直接执行，L2 配置变更需审批，L3 高危操作必须人工在堡垒机上执行。每步操作记录完整审计日志。
+      </div>
+    </div>
+
+    <!-- Gap 3 -->
+    <div class="card" style="border-left:3px solid var(--yellow);">
+      <h4>③ 多租户：同时管多家银行</h4>
+      <div class="detail" style="font-size:0.78rem;">
+        <strong style="color:var(--red);">差距</strong><br>
+        华峻捷科的客户（省农信社、广州农商行、中邮消费金融...）数据必须绝对隔离。同一套 Agent 不能串数据。<br><br>
+        <strong style="color:var(--green);">方案</strong><br>
+        Workspace 级隔离：每个客户独立配置空间、独立 Skill 规则集、独立 LLM 上下文。Agent 实例按客户隔离部署或逻辑分区。
+      </div>
+    </div>
+
+    <!-- Gap 4 -->
+    <div class="card" style="border-left:3px solid var(--yellow);">
+      <h4>④ 学习闭环：这次修了下次能复用吗</h4>
+      <div class="detail" style="font-size:0.78rem;">
+        <strong style="color:var(--red);">差距</strong><br>
+        Demo 的分析是预写好的。真实 Agent 需要从每次处理中积累知识——这次遇到 RAID 重建不知道怎么处理，人工处理完后 Agent 应该学会。<br><br>
+        <strong style="color:var(--green);">方案</strong><br>
+        事件知识图谱：每次处理的事件→根因→修复方案存入图数据库。下次相似告警直接匹配历史方案。SSOT（Single Source of Truth）持续更新。
+      </div>
+    </div>
+
+    <!-- Gap 5 -->
+    <div class="card" style="border-left:3px solid var(--blue);">
+      <h4>⑤ 成本控制：每次 LLM 分析花多少钱</h4>
+      <div class="detail" style="font-size:0.78rem;">
+        <strong style="color:var(--red);">差距</strong><br>
+        Demo 不限成本调 LLM。真实场景每天数百条告警，全量 LLM 分析成本不可接受。华为 ModelArts 上推理也有算力成本。<br><br>
+        <strong style="color:var(--green);">方案</strong><br>
+        三层过滤：规则引擎处理 80% 已知告警（零 LLM 成本）→ 轻量模型做二级判断 → 仅复杂/新型告警调大模型。历史匹配命中则直接复用结果。
+      </div>
+    </div>
+
+    <!-- Gap 6 -->
+    <div class="card" style="border-left:3px solid var(--blue);">
+      <h4>⑥ Agent 自身的运维：谁来监控监控者</h4>
+      <div class="detail" style="font-size:0.78rem;">
+        <strong style="color:var(--red);">差距</strong><br>
+        Demo 假设 Agent 永远正常运行。真实环境 Agent 本身也会挂、API 会超时、模型响应会变慢。银行不能接受"Agent 挂了所以告警没人处理"。<br><br>
+        <strong style="color:var(--green);">方案</strong><br>
+        Agent 双活部署 + 心跳监控。超过 N 秒未响应则自动切换备节点。同时保留传统告警通道（短信/电话）作为最后兜底，Agent 不是唯一路径。
+      </div>
+    </div>
+
+  </div>
+
+  <h3 style="margin-top:32px;">实施路线图建议</h3>
+  <div style="display:flex;gap:12px;margin:16px 0;font-size:0.82rem;">
+    <div style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center;">
+      <div style="font-family:var(--font-mono);color:var(--accent);font-weight:600;margin-bottom:6px;">Phase 1 · 1-2 月</div>
+      <div style="color:var(--muted);font-size:0.78rem;">对接单一客户监控系统<br>规则引擎 + 告警去重<br>L1 只读操作自动执行</div>
+    </div>
+    <div style="color:var(--muted);font-size:1.2rem;display:flex;align-items:center;">→</div>
+    <div style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center;">
+      <div style="font-family:var(--font-mono);color:var(--accent);font-weight:600;margin-bottom:6px;">Phase 2 · 3-4 月</div>
+      <div style="color:var(--muted);font-size:0.78rem;">安全围栏 + 审批流<br>多租户隔离<br>事件知识图谱上线</div>
+    </div>
+    <div style="color:var(--muted);font-size:1.2rem;display:flex;align-items:center;">→</div>
+    <div style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center;">
+      <div style="font-family:var(--font-mono);color:var(--accent);font-weight:600;margin-bottom:6px;">Phase 3 · 5-6 月</div>
+      <div style="color:var(--muted);font-size:0.78rem;">多客户推广<br>成本优化（三层过滤）<br>Agent HA + 监控</div>
+    </div>
+  </div>
+
+</div>
+</div><!-- /page2 -->
+
+<!-- ═══════════ Footer ═══════════ -->
+<div class="footer">
+  Agent设计: 吴东蔚 (Devin Wu) · 技术栈: Python + LLM推理 + Skill声明式架构<br>
+  适用场景: 金融行业IT智能运维 / AIOps · 面试目标: 华峻捷科 AI应用产品经理<br>
+  2026
+</div>
+
+</div><!-- /container -->
+
+<script>
+// ── Scenario Data ──
+const scenarios = [
+  {
+    id: "INC-20260519-001",
+    name: "鲲鹏服务器磁盘空间告警",
+    layer: "服务器运维",
+    level: "warn", levelText: "二级告警（重要）",
+    device: { type:"服务器", model:"华为TaiShan 200 (鲲鹏920)", ip:"10.128.36.42", location:"广州生产中心 C区 6号机柜", role:"核心交易前置服务器" },
+    metrics: [
+      { label:"CPU", val:"34%", ok:true, limit:"80%" }, { label:"内存", val:"61%", ok:true, limit:"80%" },
+      { label:"磁盘 /", val:"38%", ok:true, limit:"85%" }, { label:"磁盘 /data", val:"92%", ok:false, limit:"85%" },
+      { label:"磁盘 /backup", val:"42%", ok:true, limit:"85%" }, { label:"网络", val:"320 Mbps", ok:true, limit:"800 Mbps" }
+    ],
+    alert: "磁盘分区 /data 使用率 92% > 阈值 85%，连续3次采样确认",
+    analysis: {
+      rootCause: "新版交易日志模块DEBUG级别未关闭，日志以2.3GB/天增长，超出正常0.5GB/天的4.6倍",
+      evidence: [
+        {text:"三天前上线的新版交易日志模块，代码遗留DEBUG级别日志", type:"problem"},
+        {text:"/data 使用率从24h前的78%升至92%，增长14%≈112GB", type:"problem"},
+        {text:"日志增长率2.3GB/天，远超正常基线0.5GB/天", type:"problem"},
+        {text:"其他分区正常（/ 38%、/backup 42%），排除系统级异常", type:"ruled_out"},
+        {text:"CPU 34%、内存 61% 正常，排除服务器性能问题", type:"ruled_out"}
+      ],
+      impact: "当前业务未受影响。但按速率27小时后磁盘将满，交易日志写入失败，核心系统中断",
+      recommendation: "①改日志级别DEBUG→INFO ②归档近3天日志(约7GB) ③设置自动轮转策略",
+      needsHuman: "否。操作安全可逆，无需重启服务"
+    },
+    remediation: [
+      { action:"归档 /data/logs/trade_*.log (近3天)", result:"失败: /backup 使用率 89%，空间不足", ok:false, fallback:"若 /backup 也满 → 清理最旧的30天前日志腾空间" },
+      { action:"↳ 降级执行: 清理 /backup 中 30 天前的归档日志", result:"释放 5.1GB，/backup 降至 64%。重试归档…", ok:true, isFallback:true },
+      { action:"归档 /data/logs/trade_*.log (近3天) [重试]", result:"已归档 6.8GB 至 /backup/archive/", ok:true },
+      { action:"修改 log4j2.xml: DEBUG → INFO", result:"配置已更新，热加载生效，无需重启", ok:true, fallback:"若热加载失败 → 标记下次变更窗口重启时生效，当前先手动清理" },
+      { action:"设置日志轮转策略: 按天+100MB上限", result:"logrotate 配置已更新", ok:true, fallback:"若 logrotate 不可用 → 添加 cron 任务每日清理" },
+      { action:"验证 /data 使用率", result:"/data 从 92% 降至 67%", ok:true, fallback:"若未降至安全水位 → 扩大归档范围至7天日志，仍不足则升级告警" }
+    ]
+  },
+  {
+    id: "INC-20260519-002",
+    name: "GaussDB 数据库连接池耗尽",
+    layer: "数据库运维",
+    level: "critical", levelText: "一级告警（紧急）",
+    device: { type:"数据库", model:"华为GaussDB (for openGauss)", ip:"10.128.36.10", location:"广州生产中心 B区 3号机柜", role:"核心交易数据库主节点" },
+    metrics: [
+      { label:"连接池", val:"475/500 (95%)", ok:false, limit:"80%" },
+      { label:"等待队列", val:"34", ok:false, limit:"5" },
+      { label:"TPS", val:"1,420", ok:false, limit:"3,000-5,000" },
+      { label:"QPS", val:"8,900", ok:true, limit:"15,000" },
+      { label:"CPU", val:"87%", ok:false, limit:"80%" }, { label:"内存", val:"72%", ok:true, limit:"80%" }
+    ],
+    alert: "数据库连接池 95% > 阈值 80%，等待队列 34，连续5次采样确认",
+    analysis: {
+      rootCause: "个贷系统批量跑批产生3个慢查询（最长48秒），占用连接不释放，连接池从正常40-60%飙升至95%",
+      evidence: [
+        {text:"连接池 475/500=95%，等待队列34个请求", type:"problem"},
+        {text:"TOP慢查询: 48s、35s、22s，均处于active状态", type:"problem"},
+        {text:"PID 18203 处于 'idle in transaction' —— 事务已结束但连接未释放", type:"problem"},
+        {text:"TPS从正常的3K-5K降至1,420，连接瓶颈导致吞吐量骤降", type:"problem"},
+        {text:"CPU 87%、Memory 72%，负载升高但未到极限", type:"ruled_out"}
+      ],
+      impact: "新交易请求等待最长8.2秒——用户端表现为支付超时/转账失败。若不处理，连接池很快耗尽",
+      recommendation: "①KILL PID 18432(48s)和PID 18203(idle) ②通知个贷团队查SQL索引 ③临时调连接池上限500→600",
+      needsHuman: "部分需要。KILL可自动执行，但需人工通知个贷团队排查SQL"
+    },
+    remediation: [
+      { action:"KILL PID 18432 (慢查询48s)", result:"已终止，释放12个连接", ok:true, fallback:"若KILL失败 → 重启连接池，强制断开所有异常会话" },
+      { action:"KILL PID 18203 (idle in transaction)", result:"已终止，释放3个连接", ok:true, fallback:"若KILL失败 → 设置 idle_in_transaction_session_timeout 自动清理" },
+      { action:"调整 max_connections 500→600", result:"连接池使用率降至 79%", ok:true, fallback:"若参数调整失败 → 立即通知DBA手动介入" },
+      { action:"验证连接池状态", result:"活跃385/600=64%，等待清零，TPS恢复至4,200", ok:true, fallback:"若TPS未恢复 → 暂停个贷跑批任务，逐个恢复" }
+    ]
+  },
+  {
+    id: "INC-20260519-003",
+    name: "OceanStor 存储I/O延迟异常",
+    layer: "存储运维",
+    level: "critical", levelText: "一级告警（紧急）",
+    device: { type:"存储阵列", model:"华为OceanStor Dorado 8000 V6", ip:"10.128.36.200", location:"广州生产中心 A区 存储集群", role:"核心SAN存储，承载交易数据库和文件系统" },
+    metrics: [
+      { label:"I/O延迟", val:"120.5ms", ok:false, limit:"≤10ms" },
+      { label:"读延迟", val:"135.2ms", ok:false, limit:"≤10ms" }, { label:"写延迟", val:"98.7ms", ok:false, limit:"≤10ms" },
+      { label:"IOPS", val:"28,500", ok:false, limit:"45K-60K" },
+      { label:"磁盘健康", val:"46/48 OK", ok:false, limit:"48/48" }, { label:"缓存命中率", val:"94.2%", ok:true, limit:"≥90%" }
+    ],
+    alert: "存储I/O延迟 120ms > 阈值 10ms，持续3分钟，连续18次采样确认",
+    analysis: {
+      rootCause: "Slot 17磁盘于16:30报SMART错误，存储控制器自动触发RAID重建——重建过程占用I/O带宽，延迟从2-5ms飙升至120ms",
+      evidence: [
+        {text:"I/O延迟120ms（正常2-5ms），涨幅40倍，符合RAID重建的间歇性I/O特征", type:"problem"},
+        {text:"磁盘健康: 48盘中1 failed(Slot 17)、1 rebuilding、46 healthy", type:"problem"},
+        {text:"16:30 SMART报错→16:45延迟告警，时间链完全吻合", type:"problem"},
+        {text:"IOPS从45K-60K降至28.5K，RAID重建占用约40%带宽", type:"problem"},
+        {text:"缓存命中率94.2%，上层业务仍在跑但性能受损", type:"ruled_out"}
+      ],
+      impact: "数据库I/O延迟升高→交易处理变慢→用户支付操作明显卡顿。RAID重建预计还需4-6小时",
+      recommendation: "①RAID重建不应中断(自动保护机制) ②通知业务部门性能降级 ③降低非核心批处理优先级 ④备盘准备",
+      needsHuman: "是。RAID重建不可中断，需人工评估是否灾备切换"
+    },
+    remediation: [
+      { action:"RAID重建进行中，不中断", result:"重建进度 12%，预计还需 5.2 小时", ok:true, fallback:"若重建失败 → 该盘标记为永久故障，立即通知更换备盘" },
+      { action:"降低非核心批处理I/O优先级", result:"BATCH_PRIORITY→low，释放约15%带宽", ok:true, fallback:"若调整无效 → 暂停所有非核心批处理任务" },
+      { action:"通知业务部门: 当前性能降级", result:"已推送运维群 + 邮件通知接口人", ok:true, fallback:"若通知未送达 → 电话通知值班经理" },
+      { action:"持续监控I/O延迟", result:"当前延迟 85ms（RAID重建正常范围）", ok:true, fallback:"若延迟持续 >200ms → 启动灾备切换评估流程" }
+    ]
+  }
+];
+
+let currentScenario = 0;
+let currentStep = 0;
+let stepInterval = null;
+
+function switchPage(idx) {
+  document.querySelectorAll('.page-nav button').forEach((b,i) => b.classList.toggle('active', i===idx));
+  document.getElementById('page0').classList.toggle('active', idx===0);
+  document.getElementById('page1').classList.toggle('active', idx===1);
+  document.getElementById('page2').classList.toggle('active', idx===2);
+}
+
+function switchScenario(idx) {
+  currentScenario = idx;
+  currentStep = 0;
+  if (stepInterval) clearInterval(stepInterval);
+  document.querySelectorAll('.scenario-btn').forEach((b,i) => b.classList.toggle('active', i===idx));
+  renderAll();
+}
+
+function nextStep() {
+  if (currentStep < 6) {
+    currentStep++;
+    renderAll();
+  }
+}
+
+function autoPlay() {
+  currentStep = 0;
+  renderAll();
+  stepInterval = setInterval(() => {
+    if (currentStep < 6) { currentStep++; renderAll(); }
+    else { clearInterval(stepInterval); stepInterval = null; }
+  }, 800);
+}
+
+function renderAll() {
+  const s = scenarios[currentScenario];
+  const steps = [
+    { icon:"📡", name:"感知 (Monitor Skill)", hide:currentStep<1 },
+    { icon:"🧠", name:"分析 (Analyze Skill + LLM推理)", hide:currentStep<2 },
+    { icon:"⚖️", name:"决策 (Agent自主判断)", hide:currentStep<3 },
+    { icon:"🔧", name:"执行 (Remediate Skill)", hide:currentStep<4 },
+    { icon:"📋", name:"报告 (Report Skill)", hide:currentStep<5 },
+    { icon:"🔄", name:"持续监控", hide:currentStep<6 }
+  ];
+
+  let html = '';
+
+  // Device bar
+  const lvlClass = s.level==='critical'?'alert-critical':'alert-warn';
+  html += `<div style="background:var(--code-bg);border-radius:6px;padding:14px 18px;margin-bottom:20px;font-family:var(--font-mono);font-size:0.8rem;">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:6px;">
+      <span style="color:var(--muted);">${s.layer}</span>
+      <span class="${lvlClass} alert-badge">${s.levelText}</span>
+      <span style="color:var(--muted);margin-left:auto;">${s.id}</span>
+    </div>
+    <div style="color:var(--muted);">${s.device.model} · ${s.device.ip} · ${s.device.location}</div>
+  </div>`;
+
+  // Metric cards
+  html += `<div class="card-row" style="grid-template-columns:repeat(3,1fr);">`;
+  s.metrics.forEach(m => {
+    const cls = m.ok ? 'ok' : (s.level==='critical'?'critical':'warn');
+    const limitHtml = m.limit ? `<span class="unit" style="position:absolute;top:22px;right:14px;">阈值 ${m.limit}</span>` : '';
+    html += `<div class="card ${cls}" style="position:relative;"><h4>${m.label}</h4><div class="val" style="font-size:1.3rem;">${m.val}</div>${limitHtml}</div>`;
+  });
+  html += `</div>`;
+
+  // Step progress
+  html += `<div class="progress-bar">`;
+  for (let i=1; i<=6; i++) html += `<div class="progress-seg ${i<=currentStep?'done':''}"></div>`;
+  html += `</div>`;
+
+  // Steps log
+  html += `<div class="step-log">`;
+
+  // Step 1: Monitor
+  if (currentStep >= 1) {
+    const dims = s.metrics.map(m => m.label).join(' · ');
+    html += `<div class="step active">
+      <div class="step-header">📡 Step 1: 感知 — Monitor Skill</div>
+      <div class="step-content">
+        <p>设备: ${s.device.model} · ${s.device.role}<br>
+        采集维度: ${dims}（共 ${s.metrics.length} 个）<br>
+        告警触发: ${s.alert}</p>
+      </div></div>`;
+  }
+
+  // Step 2: Analyze
+  if (currentStep >= 2) {
+    const ev = s.analysis.evidence;
+    const problems = ev.filter(e => e.type === 'problem');
+    const ruledOut = ev.filter(e => e.type === 'ruled_out');
+    html += `<div class="step active">
+      <div class="step-header">🧠 Step 2: 分析 — Analyze Skill + LLM</div>
+      <div class="step-content">
+        <p><strong>根因:</strong> ${s.analysis.rootCause}</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;">
+          <div style="background:#fef5f5;border:1px solid #f5c6c6;border-radius:8px;padding:14px;">
+            <p style="color:#a71d2a;font-weight:600;font-size:0.8rem;margin-bottom:8px;">▸ 确认的异常</p>
+            <ul class="evidence">${problems.map(e=>`<li>${e.text}</li>`).join('')}</ul>
+          </div>
+          <div style="background:#f2faf5;border:1px solid #c3e6cf;border-radius:8px;padding:14px;">
+            <p style="color:#3d9965;font-weight:600;font-size:0.8rem;margin-bottom:8px;">▸ 已排除的因素</p>
+            <ul class="evidence">${ruledOut.map(e=>`<li>${e.text}</li>`).join('')}</ul>
+          </div>
+        </div>
+        <p><strong>影响评估:</strong> ${s.analysis.impact}</p>
+        <p><strong>推荐操作:</strong> ${s.analysis.recommendation}</p>
+        ${currentScenario === 1 ? `<div style="background:#fef9f0;border:1px solid #ead4a2;border-radius:6px;padding:10px 14px;margin-top:8px;font-size:0.78rem;">
+          <strong style="color:#b8860b;">🔗 跨场景关联推理</strong><br>
+          Agent 检测到 INC-20260519-001（鲲鹏磁盘告警）与当前事件共享根因特征：三天前上线的同一批次变更，同时引入了DEBUG日志和未优化的个贷SQL。<br>
+          <span style="color:var(--muted);">建议: 统一回滚该变更批次，避免逐个修复遗漏。</span>
+        </div>` : ''}
+      </div></div>`;
+  }
+
+  // Step 3: Decide
+  if (currentStep >= 3) {
+    const autoFix = s.analysis.needsHuman.startsWith('否');
+    const partial = s.analysis.needsHuman.startsWith('部分');
+    const mustHuman = s.analysis.needsHuman.startsWith('是');
+    let levelHTML = '';
+    if (autoFix) {
+      levelHTML = `<span style="font-size:0.8rem;color:var(--muted);">Agent 全自动处理，无需人工确认。操作安全可逆。</span>`;
+    } else if (partial) {
+      levelHTML = `<span style="font-size:0.8rem;color:var(--muted);">Agent 自动执行技术操作，人工仅需通知业务方。</span>`;
+    } else {
+      levelHTML = `<span style="font-size:0.8rem;color:var(--muted);">Agent 仅做分析和建议，最终决策和操作需人工执行。</span>`;
+    }
+    const badgeStyle = autoFix ? `background:#f2faf5;color:#3d9965;border:1px solid #c3e6cf;` : `background:#fde8e8;color:#a71d2a;`;
+    const badgeCls = '';
+    const badgeTxt = autoFix ? '自动执行' : (partial ? '半自动·人工通知' : '需人工决策');
+    html += `<div class="step active">
+      <div class="step-header">⚖️ Step 3: 决策 — Agent 自主判断</div>
+      <div class="step-content">
+        <p>决策结果: <span class="alert-badge" style="font-size:0.85rem;padding:4px 14px;${badgeStyle}">${badgeTxt}</span></p>
+        <p>${levelHTML}<br><span style="color:var(--muted);font-size:0.75rem;">${s.analysis.needsHuman}</span></p>
+      </div></div>`;
+  }
+
+  // Step 4: Remediate
+  if (currentStep >= 4) {
+    html += `<div class="step active">
+      <div class="step-header">🔧 Step 4: 执行 — Remediate Skill</div>
+      <div class="step-content">`;
+    s.remediation.forEach((r,i) => {
+      const ok = r.ok !== false;
+      const icon = ok ? '✓' : '✗';
+      const iconColor = ok ? 'var(--green)' : 'var(--red)';
+      const bgColor = r.isFallback ? 'background:#fef9f0;' : (!ok ? 'background:#fff5f5;' : '');
+      const indent = r.isFallback ? '28px' : '0';
+      const numStyle = r.isFallback ? `↳` : `${i+1}`;
+      const numColor = r.isFallback ? 'var(--accent)' : (!ok ? 'var(--red)' : 'var(--muted)');
+      html += `<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:0.82rem;align-items:flex-start;${bgColor}padding-left:${indent};">
+        <span style="color:${iconColor};font-weight:bold;min-width:18px;">${icon}</span>
+        <span style="color:${numColor};font-family:var(--font-mono);min-width:28px;">${numStyle}</span>
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:600;">${r.action}</div>
+          <div style="color:${ok?'var(--muted)':'var(--red)'};font-size:0.75rem;margin-top:2px;">→ ${r.result}</div>
+        </div>
+        ${r.fallback ? `<div style="width:210px;font-size:0.7rem;color:var(--muted);line-height:1.5;border-left:1px dashed var(--border);padding-left:10px;margin-left:4px;display:flex;flex-direction:column;justify-content:center;align-self:stretch;">
+          <span style="background:var(--code-bg);padding:1px 6px;border-radius:3px;font-size:0.6rem;font-family:var(--font-mono);display:inline-block;width:fit-content;">降级</span>
+          <span style="margin-top:2px;">${r.fallback}</span>
+        </div>` : ''}
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  // Step 5: Report
+  if (currentStep >= 5) {
+    html += `<div class="step active">
+      <div class="step-header">📋 Step 5: 报告 — Report Skill</div>
+      <div class="step-content"><p>结构化事件报告已生成 ↓</p></div></div>`;
+
+    // Full report
+    html += `<div class="report">
+      <div class="report-header">金融IT运维事件报告 · ${s.id}</div>
+      <div class="report-body">
+        <table>
+          <tr><td>事件编号</td><td>${s.id}</td></tr>
+          <tr><td>事件名称</td><td>${s.name}</td></tr>
+          <tr><td>告警级别</td><td>${s.levelText}</td></tr>
+          <tr><td>设备类型</td><td>${s.device.type} — ${s.device.model}</td></tr>
+          <tr><td>所在位置</td><td>${s.device.location}</td></tr>
+          <tr><td>触发条件</td><td>${s.alert}</td></tr>
+          <tr><td>根因</td><td>${s.analysis.rootCause}</td></tr>
+          <tr><td>影响评估</td><td>${s.analysis.impact}</td></tr>
+        </table>
+        <p style="margin-top:12px;"><strong>修复记录:</strong></p>
+        ${s.remediation.map((r,i)=>`<p style="font-size:0.8rem;margin:4px 0;">[${i+1}] ${r.ok!==false?'✓':'✗'} ${r.action} → ${r.result}</p>`).join('')}
+        <p style="margin-top:12px;"><strong>后续建议:</strong> ${s.analysis.recommendation}<br>
+        <strong>需人工介入:</strong> ${s.analysis.needsHuman}</p>
+      </div></div>`;
+  }
+
+  // Step 6: 持续监控
+  if (currentStep >= 6) {
+    html += `<div class="step active" style="margin-top:28px;">
+      <div class="step-header">🔄 Step 6: 持续监控 — 闭环验证</div>
+      <div class="step-content">
+        <p>Agent 进入持续监控模式，每 30 分钟回检关键指标：</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0;font-size:0.8rem;">
+          <div style="background:#f2faf5;padding:8px 12px;border-radius:6px;">✓ +30min: ${s.metrics[0].label} 正常</div>
+          <div style="background:#f2faf5;padding:8px 12px;border-radius:6px;">✓ +60min: 关键指标均在阈值内</div>
+          <div style="background:#f2faf5;padding:8px 12px;border-radius:6px;">✓ +90min: 业务无异常波动</div>
+          <div style="background:#f2faf5;padding:8px 12px;border-radius:6px;">✓ +24h:  事件自动关闭</div>
+        </div>
+        <p style="color:var(--muted);font-size:0.75rem;">若任一检查点异常 → 触发本轮修复的降级链 → 升级至人工处理。</p>
+      </div></div>`;
+  }
+
+  html += `</div>`; // step-log
+
+  // Controls
+  html += `<div class="btn-row">
+    <button class="btn" onclick="autoPlay()">▶ 自动演示</button>`;
+  if (currentStep < 5) {
+    html += `<button class="btn accent" onclick="nextStep()">下一步 →</button>`;
+  }
+  html += `</div>`;
+
+  document.getElementById('demo-body').innerHTML = html;
+}
+
+// Init
+renderAll();
+</script>
+
+</body>
+</html>
