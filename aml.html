@@ -127,6 +127,12 @@ body { background:var(--bg); color:var(--text); font-family:var(--font-sans); li
   <p><strong style="color:var(--green);">Agent 不是替代规则引擎，而是接在引擎后面</strong>——告警来了，自动调取关联交易、图谱分析资金链路、核查制裁名单、检索历史案例，给出可解释的判断。合规人员只复核标为"可疑"的案例。</p>
 </div>
 
+<div class="section">
+  <h2>为什么选择 ReAct Agent 而非纯规则引擎</h2>
+  <p>规则引擎只能处理已知模式，面对新型洗钱手法（如 NFT 洗钱、跨链混币）束手无策。<strong>LLM Agent 具备开放域推理能力</strong>，能根据语义理解发现规则未覆盖的可疑模式，同时保留规则引擎作为初筛，避免 Agent 资源浪费。</p>
+  <p style="color:var(--muted);font-size:0.8rem;">规则引擎处理 80% 已知告警（零 LLM 成本） → Agent 深度调查剩下 20% 的复杂/新型案例。</p>
+</div>
+
 <div class="section"><h2>整体架构</h2><p style="font-size:0.8rem;color:var(--muted);margin-bottom:16px;">点击各层展开/折叠。点击子卡片查看详细信息。</p>
 
 <!-- ══ L1 ══ -->
@@ -196,9 +202,15 @@ body { background:var(--bg); color:var(--text); font-family:var(--font-sans); li
 <div class="layer-body" id="body-L3" style="display:block;border-top:1px dashed #ead4a2;">
 
 <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;justify-content:center;">
-<span style="background:var(--card);border:1px solid var(--border);padding:6px 14px;border-radius:6px;font-weight:600;font-size:0.73rem;">💭 Thought</span><span style="color:var(--muted);">→</span>
-<span style="background:var(--card);border:1px solid var(--border);padding:6px 14px;border-radius:6px;font-weight:600;font-size:0.73rem;">🔧 Action</span><span style="color:var(--muted);">→</span>
-<span style="background:var(--card);border:1px solid var(--border);padding:6px 14px;border-radius:6px;font-weight:600;font-size:0.73rem;">✅ Observation</span><span style="color:var(--muted);font-size:1.2rem;">⟳</span>
+<span style="background:var(--card);border:1px solid var(--border);padding:6px 14px;border-radius:6px;font-weight:600;font-size:0.73rem;">💭 Thought<br><span style="font-weight:400;font-size:0.63rem;color:var(--muted);">思考推理</span></span><span style="color:var(--muted);">→</span>
+<span style="background:var(--card);border:1px solid var(--border);padding:6px 14px;border-radius:6px;font-weight:600;font-size:0.73rem;">🔧 Action<br><span style="font-weight:400;font-size:0.63rem;color:var(--muted);">调用工具</span></span><span style="color:var(--muted);">→</span>
+<span style="background:var(--card);border:1px solid var(--border);padding:6px 14px;border-radius:6px;font-weight:600;font-size:0.73rem;">✅ Observation<br><span style="font-weight:400;font-size:0.63rem;color:var(--muted);">获取结果</span></span><span style="color:var(--muted);font-size:1.2rem;">⟳</span>
+</div>
+
+<div style="background:var(--card);border-radius:6px;padding:10px 14px;margin-bottom:10px;font-size:0.7rem;">
+<strong>Agent 运行模式</strong><br>
+<span style="color:var(--muted);"><strong>触发式：</strong>规则引擎初筛命中后，触发 Agent 深度调查<br>
+<strong>定时巡检式：</strong>每日凌晨对高风险账户批量扫描</span>
 </div>
 
 <div class="sub-grid" style="grid-template-columns:repeat(4,1fr);">
@@ -271,6 +283,11 @@ body { background:var(--bg); color:var(--text); font-family:var(--font-sans); li
 <tr><td>制裁模糊命中</td><td>相似度 0.7-0.95</td><td>人工确认身份</td></tr>
 <tr><td>上报决策</td><td>是否提交 SAR 至监管</td><td>合规官最终签批</td></tr></table>
 <p style="font-size:0.7rem;margin-top:8px;"><strong>审核 SLA:</strong> 极高风险24h · 高风险3工作日 · 中风险7工作日</p>
+<p style="font-weight:600;margin-top:10px;margin-bottom:4px;">审核工作台功能</p>
+<p style="font-size:0.7rem;color:var(--muted);">· 展示 Agent 完整推理链（每一步 Thought/Action/Observation 可展开查看）<br>
+· 审核员可对 Agent 结论标注：同意 / 降级 / 驳回并说明原因<br>
+· 支持追问模式：审核员输入自然语言问题，Agent 继续调查<br>
+· 驳回数据回流训练集，持续优化 Agent</p>
 </div>
 <div class="sub-detail" id="det-L4-dash">
 <table><tr style="border-bottom:2px solid var(--border);"><td style="font-weight:600;">指标</td><td style="font-weight:600;">说明</td></tr>
@@ -300,8 +317,15 @@ body { background:var(--bg); color:var(--text); font-family:var(--font-sans); li
 <div style="flex:1;min-width:180px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center;"><div style="font-family:var(--font-mono);color:var(--accent);font-weight:600;margin-bottom:8px;">Phase 3 · 生产加固 · 持续</div><div style="color:var(--muted);font-size:0.75rem;line-height:1.6;">Kafka 实时交易流<br>安全权限体系<br>反馈回路: 标注→优化<br>日处理百万级交易<br>监管备案</div></div>
 </div></div>
 
-<div class="section"><h2>为什么华峻捷科适合做这个</h2>
-<p>华峻捷科已经在给东莞银行做反洗钱系统。银行的最大痛点不是"规则不够多"，而是<strong>误报太多淹没了真正可疑的交易</strong>。Agent 接在现有规则引擎后面，不需要替换已有系统——对客户来说是"加一个智能筛选层"。</p></div>
+<div class="section">
+  <h2>附录：关键设计决策说明</h2>
+  
+  <h3>为什么要保留人工审核？</h3>
+  <p>AML 决策（尤其是账户冻结和 SAR 上报）具有法律效力，AI 误判代价极高。<strong>Human-in-the-Loop 不仅是合规要求，也是建立系统公信力、收集标注数据持续优化的必要环节。</strong></p>
+
+  <h3>如何控制 Agent 的幻觉风险？</h3>
+  <p>所有结论必须有工具调用的实际数据支撑，禁止 Agent 在没有工具返回结果的情况下编造数据。通过 Prompt 约束要求 Agent 明确区分<strong style="color:var(--green);">「已证实事实」</strong>与<strong style="color:var(--red);">「推断/假设」</strong>，并在 SAR 报告中分别标注。</p>
+</div>
 
 </div><!-- /page0 -->
 
