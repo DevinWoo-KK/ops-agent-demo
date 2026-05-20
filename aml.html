@@ -18,14 +18,12 @@
 body { background:var(--bg); color:var(--text); font-family:var(--font-sans); line-height:1.6; }
 .container { max-width:960px; margin:0 auto; padding:30px 24px; }
 
-/* Hero */
 .hero { padding:30px 0 20px; text-align:center; border-bottom:1px solid var(--border); margin-bottom:24px; }
 .hero h1 { font-family:var(--font-serif); font-size:1.8rem; font-weight:700; color:var(--accent); margin-bottom:6px; }
 .hero .sub { color:var(--muted); font-size:0.9rem; }
 .hero .tags { margin-top:12px; display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
 .tag { background:var(--code-bg); padding:4px 12px; font-size:0.75rem; color:var(--muted); font-family:var(--font-mono); }
 
-/* Page Nav */
 .page-nav { display:flex; gap:0; margin-bottom:28px; border-bottom:1px solid var(--border); }
 .page-nav button { flex:1; padding:14px 20px; border:none; background:transparent; cursor:pointer; font-family:var(--font-serif); font-size:1rem; color:var(--muted); transition:all 0.2s; position:relative; }
 .page-nav button:hover { color:var(--text); }
@@ -34,11 +32,32 @@ body { background:var(--bg); color:var(--text); font-family:var(--font-sans); li
 .page { display:none; }
 .page.active { display:block; }
 
-/* Sections */
 .section { margin-bottom:48px; }
 .section h2 { font-family:var(--font-serif); font-size:1.4rem; font-weight:700; color:var(--accent); margin-bottom:16px; padding-bottom:8px; border-bottom:1px solid var(--border); }
 .section h3 { font-size:1rem; font-weight:600; margin:24px 0 10px; }
 .section p { margin-bottom:10px; color:#3a3a3a; font-size:0.9rem; }
+
+/* Architecture */
+.arch-layer { border-radius:10px; padding:14px 18px; margin-bottom:0; cursor:pointer; }
+.arch-layer .layer-header { display:flex; align-items:center; gap:12px; }
+.arch-layer .layer-body { display:none; margin-top:10px; padding-top:10px; }
+.arch-arrow { font-size:1rem; transition:transform 0.2s; display:inline-block; }
+.arch-arrow.open { transform:rotate(90deg); }
+
+.sub-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:6px; margin:8px 0; }
+.sub-card { background:#fff; border:1px solid var(--border); border-radius:6px; padding:8px 10px; cursor:pointer; font-size:0.7rem; text-align:center; transition:all 0.15s; }
+.sub-card:hover { border-color:var(--accent); }
+.sub-card strong { display:block; font-size:0.73rem; margin-bottom:2px; }
+.sub-card .hint { color:var(--muted); font-size:0.62rem; }
+.sub-card.open { border-color:var(--accent); background:#fef9f0; }
+
+.sub-detail { display:none; background:var(--code-bg); border-radius:8px; padding:14px 18px; margin:8px 0; font-size:0.73rem; }
+.sub-detail table { width:100%; border-collapse:collapse; }
+.sub-detail td { padding:4px 8px; border-bottom:1px solid var(--border); font-size:0.7rem; vertical-align:top; }
+.sub-detail td:first-child { color:var(--muted); width:100px; font-family:var(--font-mono); }
+
+.arrow-down { text-align:center; padding:4px 0; }
+.arrow-down span { color:var(--muted); font-size:0.9rem; }
 
 /* Cards */
 .card-row { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px; margin:12px 0; }
@@ -46,19 +65,7 @@ body { background:var(--bg); color:var(--text); font-family:var(--font-sans); li
 .card h4 { font-family:var(--font-mono); font-size:0.85rem; color:var(--blue); margin-bottom:6px; }
 .card .detail { font-size:0.78rem; color:var(--muted); line-height:1.5; }
 
-/* Flow */
-.flow { display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:center; padding:16px; background:var(--code-bg); border-radius:8px; margin:12px 0; }
-.flow-step { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:10px 18px; text-align:center; font-family:var(--font-mono); font-size:0.82rem; }
-.flow-step .icon { font-size:1.2rem; margin-bottom:3px; }
-.flow-arrow { color:var(--muted); }
-.flow.large .flow-step { padding:14px 28px; font-size:0.9rem; }
-
-/* Bar */
-.bar { background:var(--code-bg); border-radius:6px; padding:10px 16px; margin-bottom:12px; font-family:var(--font-mono); font-size:0.78rem; display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
-.bar .stat { text-align:center; }
-.bar .stat .n { font-size:1.1rem; font-weight:600; }
-
-/* ReAct trace */
+/* ReAct trace (page 2) */
 .trace-block { margin-bottom:10px; padding:12px 16px; border-radius:8px; font-family:var(--font-mono); font-size:0.76rem; line-height:1.5; }
 .trace-thought { background:#f2f4ff; border:1px solid #d0daf5; border-left:3px solid #6b8cff; }
 .trace-action { background:#fef9f0; border:1px solid #ead4a2; border-left:3px solid #d9a845; }
@@ -74,17 +81,14 @@ body { background:var(--bg); color:var(--text); font-family:var(--font-sans); li
 .tool-call .fn { font-weight:700; color:var(--blue); margin-bottom:4px; }
 .tool-call .result { margin-top:6px; padding:8px; background:var(--code-bg); border-radius:4px; font-size:0.72rem; max-height:200px; overflow-y:auto; white-space:pre-wrap; }
 
-/* Progress */
 .progress { display:flex; gap:3px; margin:8px 0 16px; }
 .progress .dot { width:8px; height:8px; border-radius:50%; background:var(--border); }
 .progress .dot.done { background:var(--green); }
 .progress .dot.current { background:var(--accent); }
 
-/* Summary */
 .summary { margin-top:20px; padding:16px; border-radius:8px; }
 .summary.high { background:#fef5f5; border:2px solid #f5c6c6; }
 .summary .score { font-size:2rem; font-weight:700; color:var(--red); }
-.summary .meta { font-size:0.8rem; color:var(--muted); margin-top:8px; }
 
 .btn-row { display:flex; gap:8px; margin-top:12px; }
 .btn { padding:8px 20px; border:1px solid var(--text); background:transparent; color:var(--text); font-family:var(--font-mono); font-size:0.8rem; cursor:pointer; }
@@ -94,27 +98,21 @@ body { background:var(--bg); color:var(--text); font-family:var(--font-sans); li
 
 .footer { text-align:center; padding:24px 0; color:var(--muted); font-size:0.75rem; border-top:1px solid var(--border); margin-top:30px; }
 
-@media(max-width:600px){ .flow{flex-direction:column;} .flow-arrow{transform:rotate(90deg);} }
+@media(max-width:600px){ .sub-grid{grid-template-columns:repeat(2,1fr);} }
 </style>
 </head>
 <body>
 <div class="container">
 
-<!-- ══ HERO ══ -->
 <div class="hero">
   <h1>反洗钱 AML Agent</h1>
   <p class="sub">ReAct 推理模式 · 8 工具并行调查 · 可解释推理链</p>
   <div class="tags">
-    <span class="tag">ReAct Agent</span>
-    <span class="tag">transaction_query</span>
-    <span class="tag">graph_analysis</span>
-    <span class="tag">sanction_check</span>
-    <span class="tag">risk_scorer</span>
-    <span class="tag">FATF 40条</span>
+    <span class="tag">ReAct Agent</span><span class="tag">transaction_query</span><span class="tag">graph_analysis</span>
+    <span class="tag">sanction_check</span><span class="tag">risk_scorer</span><span class="tag">FATF 40条</span>
   </div>
 </div>
 
-<!-- ══ PAGE NAV ══ -->
 <div class="page-nav">
   <button class="active" onclick="switchPage(0)">设计说明</button>
   <button onclick="switchPage(1)">Demo 演示</button>
@@ -129,304 +127,246 @@ body { background:var(--bg); color:var(--text); font-family:var(--font-sans); li
   <p><strong style="color:var(--green);">Agent 不是替代规则引擎，而是接在引擎后面</strong>——告警来了，自动调取关联交易、图谱分析资金链路、核查制裁名单、检索历史案例，给出可解释的判断。合规人员只复核标为"可疑"的案例。</p>
 </div>
 
-<div class="section">
-  <h2>整体架构</h2>
+<div class="section"><h2>整体架构</h2><p style="font-size:0.8rem;color:var(--muted);margin-bottom:16px;">点击各层展开/折叠。点击子卡片查看详细信息。</p>
 
-  <div style="position:relative;padding:12px 0;">
+<!-- ══ L1 ══ -->
+<div class="arch-layer" style="background:linear-gradient(135deg,#e8f0fe,#d4e3fc);border:1px solid #a8c8f0;">
+<div class="layer-header" onclick="toggleLayer('L1')">
+<span class="arch-arrow open" id="arr-L1">▾</span><div><div style="font-weight:700;font-size:0.9rem;">数据接入层</div><div style="font-size:0.7rem;color:var(--muted);">交易流水 · KYC · 黑名单 · 舆情</div></div>
+<div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;"><span style="background:#d4e3fc;padding:2px 8px;border-radius:3px;font-size:0.65rem;font-family:var(--font-mono);">Kafka</span><span style="background:#d4e3fc;padding:2px 8px;border-radius:3px;font-size:0.65rem;font-family:var(--font-mono);">批量同步</span><span style="background:#d4e3fc;padding:2px 8px;border-radius:3px;font-size:0.65rem;font-family:var(--font-mono);">API</span></div>
+</div>
+<div class="layer-body" id="body-L1" style="display:block;border-top:1px dashed #a8c8f0;">
+<div class="sub-grid">
+  <div class="sub-card open" onclick="toggleSub('L1-data')" id="card-L1-data"><strong>数据来源</strong><span class="hint">6类数据</span></div>
+  <div class="sub-card" onclick="toggleSub('L1-way')" id="card-L1-way"><strong>接入方式</strong><span class="hint">4种通道</span></div>
+  <div class="sub-card" onclick="toggleSub('L1-pre')" id="card-L1-pre"><strong>数据预处理</strong><span class="hint">4个步骤</span></div>
+</div>
+<div class="sub-detail" id="det-L1-data" style="display:block;">
+<table><tr style="border-bottom:2px solid var(--border);"><td style="font-weight:600;">数据类型</td><td style="font-weight:600;">说明</td><td style="font-weight:600;">更新频率</td></tr>
+<tr><td>交易流水</td><td>转账、汇款、取现、充值等原始交易记录</td><td>实时 / T+0</td></tr>
+<tr><td>账户信息</td><td>开户资料、账户状态、历史行为基线</td><td>日更新</td></tr>
+<tr><td>KYC 数据</td><td>客户身份核验信息、企业注册信息、受益所有人</td><td>注册时/变更时</td></tr>
+<tr><td>黑名单库</td><td>OFAC制裁名单、国内监管黑名单、PEP名单</td><td>每日同步</td></tr>
+<tr><td>舆情数据</td><td>新闻、司法公告、媒体负面报道</td><td>实时抓取</td></tr>
+<tr><td>同业数据</td><td>跨行可疑线索（视监管政策接入）</td><td>批量交换</td></tr>
+</table></div>
+<div class="sub-detail" id="det-L1-way">
+<table><tr style="border-bottom:2px solid var(--border);"><td style="font-weight:600;">方式</td><td style="font-weight:600;">说明</td></tr>
+<tr><td>实时流</td><td>Kafka 消息队列接入核心交易系统，保证低延迟</td></tr>
+<tr><td>批量同步</td><td>T+1 全量拉取账户、KYC 数据至数仓</td></tr>
+<tr><td>API 接入</td><td>黑名单、舆情数据通过第三方 API 拉取并缓存</td></tr>
+<tr><td>文件导入</td><td>监管下发的名单文件解析入库</td></tr>
+</table></div>
+<div class="sub-detail" id="det-L1-pre">
+<table><tr style="border-bottom:2px solid var(--border);"><td style="font-weight:600;">步骤</td><td style="font-weight:600;">说明</td></tr>
+<tr><td>交易标准化</td><td>统一货币单位、时区、交易类型编码</td></tr>
+<tr><td>实体识别与链接</td><td>将姓名、证件号、企业名关联到统一实体 ID</td></tr>
+<tr><td>异常值过滤</td><td>去除系统测试交易、内部划拨等噪声数据</td></tr>
+<tr><td>特征工程</td><td>计算账户近 7/30/90 天交易频率、金额分布、对手方多样性等基础特征</td></tr>
+</table></div></div></div>
 
-    <!-- L1: 数据接入 -->
-    <div style="background:linear-gradient(135deg,#e8f0fe,#d4e3fc);border:1px solid #a8c8f0;border-radius:10px;padding:14px 18px;margin-bottom:0;position:relative;z-index:4;cursor:pointer;" onclick="toggleArch(0)">
-      <div style="display:flex;align-items:center;gap:12px;">
-        <span class="arch-arrow" id="arch-arrow-0" style="font-size:1rem;">▾</span>
-        <div>
-          <div style="font-weight:700;font-size:0.9rem;">数据接入层</div>
-          <div style="font-size:0.7rem;color:var(--muted);">交易流水 · KYC · 黑名单 · 舆情</div>
-        </div>
-        <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;">
-          <span style="background:#d4e3fc;padding:2px 8px;border-radius:3px;font-size:0.65rem;font-family:var(--font-mono);">Kafka</span>
-          <span style="background:#d4e3fc;padding:2px 8px;border-radius:3px;font-size:0.65rem;font-family:var(--font-mono);">批量同步</span>
-          <span style="background:#d4e3fc;padding:2px 8px;border-radius:3px;font-size:0.65rem;font-family:var(--font-mono);">API</span>
-        </div>
-      </div>
-      <div class="arch-detail" id="arch-detail-0" style="display:block;margin-top:10px;padding-top:10px;border-top:1px dashed #a8c8f0;font-size:0.73rem;">
-        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;">
-          <div style="background:#fff;border-radius:6px;padding:8px;text-align:center;"><div style="font-weight:600;font-size:0.7rem;">交易流水</div><div style="color:var(--muted);font-size:0.65rem;">Kafka 实时<br>T+0</div></div>
-          <div style="background:#fff;border-radius:6px;padding:8px;text-align:center;"><div style="font-weight:600;font-size:0.7rem;">KYC 数据</div><div style="color:var(--muted);font-size:0.65rem;">T+1 批量<br>同步数仓</div></div>
-          <div style="background:#fff;border-radius:6px;padding:8px;text-align:center;"><div style="font-weight:600;font-size:0.7rem;">黑名单</div><div style="color:var(--muted);font-size:0.65rem;">OFAC/UN/央行<br>每日同步</div></div>
-          <div style="background:#fff;border-radius:6px;padding:8px;text-align:center;"><div style="font-weight:600;font-size:0.7rem;">舆情</div><div style="color:var(--muted);font-size:0.65rem;">新闻/司法<br>实时抓取</div></div>
-          <div style="background:#fff;border-radius:6px;padding:8px;text-align:center;"><div style="font-weight:600;font-size:0.7rem;">预处理</div><div style="color:var(--muted);font-size:0.65rem;">实体链接<br>特征工程</div></div>
-        </div>
-      </div>
-    </div>
+<div class="arrow-down"><span>▼</span></div>
 
-    <!-- Arrow L1→L2 -->
-    <div style="text-align:center;padding:4px 0;position:relative;z-index:3;">
-      <span style="color:var(--muted);font-size:0.9rem;">▼</span>
-    </div>
+<!-- ══ L2 ══ -->
+<div class="arch-layer" style="background:linear-gradient(135deg,#f0f4e8,#e2ebd4);border:1px solid #b8ce9e;">
+<div class="layer-header" onclick="toggleLayer('L2')">
+<span class="arch-arrow open" id="arr-L2">▾</span><div><div style="font-weight:700;font-size:0.9rem;">数据处理与存储层</div><div style="font-size:0.7rem;color:var(--muted);">PostgreSQL · Neo4j · Qdrant · InfluxDB</div></div>
+<div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;"><span style="background:#e2ebd4;padding:2px 8px;border-radius:3px;font-size:0.65rem;font-family:var(--font-mono);">结构化</span><span style="background:#e2ebd4;padding:2px 8px;border-radius:3px;font-size:0.65rem;font-family:var(--font-mono);">图谱</span><span style="background:#e2ebd4;padding:2px 8px;border-radius:3px;font-size:0.65rem;font-family:var(--font-mono);">向量</span><span style="background:#e2ebd4;padding:2px 8px;border-radius:3px;font-size:0.65rem;font-family:var(--font-mono);">时序</span></div>
+</div>
+<div class="layer-body" id="body-L2" style="display:block;border-top:1px dashed #b8ce9e;">
+<div class="sub-grid" style="grid-template-columns:repeat(4,1fr);">
+  <div class="sub-card" onclick="toggleSub('L2-pg')" id="card-L2-pg"><strong>PostgreSQL</strong><span class="hint">关系型数据库</span></div>
+  <div class="sub-card" onclick="toggleSub('L2-neo')" id="card-L2-neo"><strong>Neo4j</strong><span class="hint">图数据库</span></div>
+  <div class="sub-card" onclick="toggleSub('L2-qd')" id="card-L2-qd"><strong>Qdrant</strong><span class="hint">向量数据库</span></div>
+  <div class="sub-card" onclick="toggleSub('L2-if')" id="card-L2-if"><strong>InfluxDB</strong><span class="hint">时序数据库</span></div>
+</div>
+<div class="sub-detail" id="det-L2-pg"><table><tr style="border-bottom:2px solid var(--border);"><td style="font-weight:600;">表</td><td style="font-weight:600;">字段</td></tr><tr><td>transactions</td><td>txn_id, from_account, to_account, amount, currency, timestamp, channel, status</td></tr><tr><td>accounts</td><td>account_id, customer_id, open_date, account_type, risk_level, kyc_status</td></tr><tr><td>customers</td><td>customer_id, name, id_number, nationality, pep_flag, sanction_flag</td></tr></table></div>
+<div class="sub-detail" id="det-L2-neo"><table><tr style="border-bottom:2px solid var(--border);"><td style="font-weight:600;">元素</td><td style="font-weight:600;">说明</td></tr><tr><td>节点类型</td><td>Account、Customer、Enterprise、IP、Device、Phone</td></tr><tr><td>边类型</td><td>TRANSFER_TO（带金额/时间属性）、BELONGS_TO、SHARED_DEVICE、LINKED_PHONE</td></tr><tr><td>核心查询</td><td>N跳路径发现、环形交易检测、团伙识别（社区发现算法 Louvain）</td></tr></table></div>
+<div class="sub-detail" id="det-L2-qd"><table><tr style="border-bottom:2px solid var(--border);"><td style="font-weight:600;">存储内容</td><td style="font-weight:600;">用途</td></tr><tr><td>历史 SAR 报告文本向量</td><td>案例相似性检索</td></tr><tr><td>监管指引、AML 规则文本</td><td>规则语义检索</td></tr><tr><td>舆情新闻摘要向量</td><td>风险事件匹配</td></tr></table></div>
+<div class="sub-detail" id="det-L2-if"><table><tr style="border-bottom:2px solid var(--border);"><td style="font-weight:600;">指标</td><td style="font-weight:600;">说明</td></tr><tr><td>每小时交易笔数</td><td>按小时聚合的交易总量</td></tr><tr><td>每小时交易金额</td><td>按小时聚合的金额汇总</td></tr><tr><td>夜间交易占比</td><td>23:00-06:00 时段交易占比</td></tr><tr><td>跨境交易占比</td><td>跨境对手方交易比例</td></tr></table></div></div></div>
 
-    <!-- L2: 存储 -->
-    <div style="background:linear-gradient(135deg,#f0f4e8,#e2ebd4);border:1px solid #b8ce9e;border-radius:10px;padding:14px 18px;margin-bottom:0;position:relative;z-index:3;cursor:pointer;" onclick="toggleArch(1)">
-      <div style="display:flex;align-items:center;gap:12px;">
-        <span class="arch-arrow" id="arch-arrow-1" style="font-size:1rem;">▾</span>
-        <div>
-          <div style="font-weight:700;font-size:0.9rem;">数据处理与存储层</div>
-          <div style="font-size:0.7rem;color:var(--muted);">PostgreSQL · Neo4j · Qdrant · InfluxDB</div>
-        </div>
-        <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;">
-          <span style="background:#e2ebd4;padding:2px 8px;border-radius:3px;font-size:0.65rem;font-family:var(--font-mono);">结构化</span>
-          <span style="background:#e2ebd4;padding:2px 8px;border-radius:3px;font-size:0.65rem;font-family:var(--font-mono);">图谱</span>
-          <span style="background:#e2ebd4;padding:2px 8px;border-radius:3px;font-size:0.65rem;font-family:var(--font-mono);">向量</span>
-          <span style="background:#e2ebd4;padding:2px 8px;border-radius:3px;font-size:0.65rem;font-family:var(--font-mono);">时序</span>
-        </div>
-      </div>
-      <div class="arch-detail" id="arch-detail-1" style="display:block;margin-top:10px;padding-top:10px;border-top:1px dashed #b8ce9e;font-size:0.73rem;">
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
-          <div style="background:#fff;border-radius:6px;padding:8px;"><div style="font-weight:600;font-size:0.7rem;">PostgreSQL</div><div style="color:var(--muted);font-size:0.64rem;">交易记录<br>账户信息</div></div>
-          <div style="background:#fff;border-radius:6px;padding:8px;"><div style="font-weight:600;font-size:0.7rem;">Neo4j</div><div style="color:var(--muted);font-size:0.64rem;">资金流向图谱<br>节点+边模型</div></div>
-          <div style="background:#fff;border-radius:6px;padding:8px;"><div style="font-weight:600;font-size:0.7rem;">Qdrant</div><div style="color:var(--muted);font-size:0.64rem;">SAR向量<br>语义检索</div></div>
-          <div style="background:#fff;border-radius:6px;padding:8px;"><div style="font-weight:600;font-size:0.7rem;">InfluxDB</div><div style="color:var(--muted);font-size:0.64rem;">行为时间序列<br>异常基线</div></div>
-        </div>
-      </div>
-    </div>
+<div class="arrow-down"><span>▼</span></div>
 
-    <!-- Arrow L2→L3 -->
-    <div style="text-align:center;padding:4px 0;position:relative;z-index:3;">
-      <span style="color:var(--muted);font-size:0.9rem;">▼</span>
-    </div>
+<!-- ══ L3 ══ -->
+<div class="arch-layer" style="background:linear-gradient(135deg,#fef9f0,#fdf0d9);border:2px solid var(--accent);">
+<div class="layer-header" onclick="toggleLayer('L3')">
+<span class="arch-arrow open" id="arr-L3">▾</span><div><div style="font-weight:700;font-size:0.9rem;color:var(--accent);">AML Agent 核心层（LLM 驱动）</div><div style="font-size:0.7rem;color:var(--muted);">ReAct · Planner · 8 Tools · Memory</div></div>
+<div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;"><span style="background:var(--accent);color:#fff;padding:2px 8px;border-radius:3px;font-size:0.65rem;font-family:var(--font-mono);">Claude 3.5</span></div>
+</div>
+<div class="layer-body" id="body-L3" style="display:block;border-top:1px dashed #ead4a2;">
 
-    <!-- L3: Agent核心 -->
-    <div style="background:linear-gradient(135deg,#fef9f0,#fdf0d9);border:2px solid var(--accent);border-radius:10px;padding:14px 18px;margin-bottom:0;position:relative;z-index:2;cursor:pointer;" onclick="toggleArch(2)">
-      <div style="display:flex;align-items:center;gap:12px;">
-        <span class="arch-arrow" id="arch-arrow-2" style="font-size:1rem;">▾</span>
-        <div>
-          <div style="font-weight:700;font-size:0.9rem;color:var(--accent);">AML Agent 核心层（LLM 驱动）</div>
-          <div style="font-size:0.7rem;color:var(--muted);">ReAct · Planner · 8 Tools · Memory</div>
-        </div>
-        <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;">
-          <span style="background:var(--accent);color:#fff;padding:2px 8px;border-radius:3px;font-size:0.65rem;font-family:var(--font-mono);">Claude 3.5</span>
-        </div>
-      </div>
-      <div class="arch-detail" id="arch-detail-2" style="display:block;margin-top:10px;padding-top:10px;border-top:1px dashed #ead4a2;font-size:0.73rem;">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;justify-content:center;">
-          <span style="background:var(--card);border:1px solid var(--border);padding:6px 14px;border-radius:6px;font-weight:600;font-size:0.73rem;">💭 Thought</span>
-          <span style="color:var(--muted);">→</span>
-          <span style="background:var(--card);border:1px solid var(--border);padding:6px 14px;border-radius:6px;font-weight:600;font-size:0.73rem;">🔧 Action</span>
-          <span style="color:var(--muted);">→</span>
-          <span style="background:var(--card);border:1px solid var(--border);padding:6px 14px;border-radius:6px;font-weight:600;font-size:0.73rem;">✅ Observation</span>
-          <span style="color:var(--muted);font-size:1.2rem;">⟳</span>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">
-          <div style="padding:6px 10px;background:var(--card);border-radius:5px;font-size:0.68rem;"><strong>任务规划器</strong> · 拆解告警→子任务序列 · 注入FATF 40条</div>
-          <div style="padding:6px 10px;background:var(--card);border-radius:5px;font-size:0.68rem;"><strong>工具调用引擎</strong> · 路由Tool · 并发调用 · 结果聚合</div>
-          <div style="padding:6px 10px;background:var(--card);border-radius:5px;font-size:0.68rem;"><strong>记忆管理</strong> · Session短期 + 向量库长期</div>
-          <div style="padding:6px 10px;background:var(--card);border-radius:5px;font-size:0.68rem;"><strong>模型</strong> · Claude 3.5 Sonnet / Opus</div>
-        </div>
-        <div style="font-weight:600;font-size:0.7rem;margin-bottom:6px;">8 个调查工具</div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;">
-          <div style="background:#fff;border-radius:5px;padding:6px 8px;text-align:center;font-size:0.65rem;"><strong>transaction_query</strong><br><span style="color:var(--muted);">交易查询+统计</span></div>
-          <div style="background:#fff;border-radius:5px;padding:6px 8px;text-align:center;font-size:0.65rem;"><strong>graph_analysis</strong><br><span style="color:var(--muted);">闭环/社区发现</span></div>
-          <div style="background:#fff;border-radius:5px;padding:6px 8px;text-align:center;font-size:0.65rem;"><strong>rule_engine</strong><br><span style="color:var(--muted);">规则+法规引用</span></div>
-          <div style="background:#fff;border-radius:5px;padding:6px 8px;text-align:center;font-size:0.65rem;"><strong>risk_scorer</strong><br><span style="color:var(--muted);">评分0-100</span></div>
-          <div style="background:#fff;border-radius:5px;padding:6px 8px;text-align:center;font-size:0.65rem;"><strong>sanction_check</strong><br><span style="color:var(--muted);">OFAC模糊匹配</span></div>
-          <div style="background:#fff;border-radius:5px;padding:6px 8px;text-align:center;font-size:0.65rem;"><strong>case_retrieval</strong><br><span style="color:var(--muted);">历史案例检索</span></div>
-          <div style="background:#fff;border-radius:5px;padding:6px 8px;text-align:center;font-size:0.65rem;"><strong>news_search</strong><br><span style="color:var(--muted);">负面舆情</span></div>
-          <div style="background:#fff;border-radius:5px;padding:6px 8px;text-align:center;font-size:0.65rem;"><strong>report_generator</strong><br><span style="color:var(--muted);">SAR草稿</span></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Arrow L3→L4 -->
-    <div style="text-align:center;padding:4px 0;position:relative;z-index:3;">
-      <span style="color:var(--muted);font-size:0.9rem;">▼</span>
-    </div>
-
-    <!-- L4: 输出 -->
-    <div style="background:linear-gradient(135deg,#fef5f5,#fce8e8);border:1px solid #f5c6c6;border-radius:10px;padding:14px 18px;position:relative;z-index:1;cursor:pointer;" onclick="toggleArch(3)">
-      <div style="display:flex;align-items:center;gap:12px;">
-        <span class="arch-arrow" id="arch-arrow-3" style="font-size:1rem;">▾</span>
-        <div>
-          <div style="font-weight:700;font-size:0.9rem;">输出与干预层</div>
-          <div style="font-size:0.7rem;color:var(--muted);">SAR 报告 · 人工审核 · 仪表盘</div>
-        </div>
-        <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;">
-          <span style="background:#fce8e8;padding:2px 8px;border-radius:3px;font-size:0.65rem;font-family:var(--font-mono);">Human-in-the-Loop</span>
-        </div>
-      </div>
-      <div class="arch-detail" id="arch-detail-3" style="display:block;margin-top:10px;padding-top:10px;border-top:1px dashed #f5c6c6;font-size:0.73rem;">
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;">
-          <div style="background:#fff;border-radius:6px;padding:8px;"><div style="font-weight:600;font-size:0.7rem;">📋 SAR 报告</div><div style="color:var(--muted);font-size:0.64rem;">基本信息·行为描述<br>证据·风险评估<br>处置建议·签批</div></div>
-          <div style="background:#fff;border-radius:6px;padding:8px;"><div style="font-weight:600;font-size:0.7rem;">👤 人工审核</div><div style="color:var(--muted);font-size:0.64rem;">风险≥80强制审核<br>制裁命中确认身份<br>冻结/上报须签批</div></div>
-          <div style="background:#fff;border-radius:6px;padding:8px;"><div style="font-weight:600;font-size:0.7rem;">📊 监控仪表盘</div><div style="color:var(--muted);font-size:0.64rem;">实时预警队列<br>Agent效率指标<br>误报率追踪</div></div>
-        </div>
-      </div>
-    </div>
-
-  </div>
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;justify-content:center;">
+<span style="background:var(--card);border:1px solid var(--border);padding:6px 14px;border-radius:6px;font-weight:600;font-size:0.73rem;">💭 Thought</span><span style="color:var(--muted);">→</span>
+<span style="background:var(--card);border:1px solid var(--border);padding:6px 14px;border-radius:6px;font-weight:600;font-size:0.73rem;">🔧 Action</span><span style="color:var(--muted);">→</span>
+<span style="background:var(--card);border:1px solid var(--border);padding:6px 14px;border-radius:6px;font-weight:600;font-size:0.73rem;">✅ Observation</span><span style="color:var(--muted);font-size:1.2rem;">⟳</span>
 </div>
 
-<div class="section">
-  <h2>安全与合规设计</h2>
-  <div class="card-row">
-    <div class="card" style="border-left:3px solid var(--red);">
-      <h4>数据安全</h4>
-      <div class="detail">PII 数据 AES-256 加密存储和传输<br>LLM 调用时敏感信息脱敏处理<br>操作日志全量审计，满足监管留痕</div>
-    </div>
-    <div class="card" style="border-left:3px solid var(--yellow);">
-      <h4>访问控制</h4>
-      <div class="detail">RBAC: 分析员/审核员/合规官/管理员<br>敏感操作双人确认（冻结/SAR上报）<br>Agent 工具只读，写操作由人工触发</div>
-    </div>
-    <div class="card" style="border-left:3px solid var(--blue);">
-      <h4>模型可信度</h4>
-      <div class="detail">每步推理产出完整推理链，禁止黑盒<br>所有结论标注依据（工具/数据来源）<br>定期人工复核 Agent 决策样本</div>
-    </div>
-    <div class="card" style="border-left:3px solid var(--green);">
-      <h4>监管合规</h4>
-      <div class="detail">遵循《反洗钱法》及央行相关规定<br>SAR 格式符合 AMAC 要求<br>系统接受内部审计和监管检查</div>
-    </div>
-  </div>
+<div class="sub-grid" style="grid-template-columns:repeat(4,1fr);">
+  <div class="sub-card" onclick="toggleSub('L3-plan')" id="card-L3-plan"><strong>任务规划器</strong><span class="hint">Planner</span></div>
+  <div class="sub-card" onclick="toggleSub('L3-tool')" id="card-L3-tool"><strong>工具调用引擎</strong><span class="hint">Tool Router</span></div>
+  <div class="sub-card" onclick="toggleSub('L3-mem')" id="card-L3-mem"><strong>记忆管理</strong><span class="hint">Memory</span></div>
+  <div class="sub-card" onclick="toggleSub('L3-tools')" id="card-L3-tools"><strong>8 个调查工具</strong><span class="hint">Tools</span></div>
 </div>
 
-<div class="section">
-  <h2>迭代路线图</h2>
-  <div style="display:flex;gap:12px;font-size:0.82rem;align-items:center;flex-wrap:wrap;">
-    <div style="flex:1;min-width:180px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center;">
-      <div style="font-family:var(--font-mono);color:var(--accent);font-weight:600;margin-bottom:8px;">Phase 1 · MVP Demo · 4周</div>
-      <div style="color:var(--muted);font-size:0.75rem;line-height:1.6;">
-        SQLite + NetworkX 数据层<br>1万账户 · 100万笔交易<br>6个核心工具<br>LangGraph ReAct Agent<br>Streamlit 简易审核界面
-      </div>
-    </div>
-    <span style="color:var(--muted);">→</span>
-    <div style="flex:1;min-width:180px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center;">
-      <div style="font-family:var(--font-mono);color:var(--accent);font-weight:600;margin-bottom:8px;">Phase 2 · 功能完善 · 4周</div>
-      <div style="color:var(--muted);font-size:0.75rem;line-height:1.6;">
-        PostgreSQL + Neo4j 生产级<br>Qdrant 历史案例语义检索<br>XGBoost 风险评分模型<br>多 Agent 并行<br>完整审核工作台
-      </div>
-    </div>
-    <span style="color:var(--muted);">→</span>
-    <div style="flex:1;min-width:180px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center;">
-      <div style="font-family:var(--font-mono);color:var(--accent);font-weight:600;margin-bottom:8px;">Phase 3 · 生产加固 · 持续</div>
-      <div style="color:var(--muted);font-size:0.75rem;line-height:1.6;">
-        Kafka 实时交易流<br>安全权限体系<br>反馈回路: 人工标注→优化<br>日处理百万级交易<br>监管备案
-      </div>
-    </div>
-  </div>
+<div class="sub-detail" id="det-L3-plan">
+<p style="font-weight:600;margin-bottom:4px;">任务规划器（Planner）</p>
+<p style="font-size:0.7rem;">接收初始任务（如「账户 ACC-88812 存在可疑交易，请调查」），拆解为子任务序列并通过 System Prompt 注入 FATF 40 条建议等 AML 专业框架，引导 LLM 按合规逻辑推理。</p>
+<p style="font-size:0.7rem;margin-top:4px;color:var(--muted);">示例拆解: ①查询近30天交易流水 ②与历史基线对比识别异常 ③图谱分析追踪资金流向 ④比对黑名单 ⑤检索相似历史案例 ⑥综合评估风险 ⑦生成 SAR 草稿</p>
 </div>
 
-<div class="section">
-  <h2>为什么华峻捷科适合做这个</h2>
-  <p>华峻捷科已经在给东莞银行做反洗钱系统。银行的最大痛点不是"规则不够多"，而是<strong>误报太多淹没了真正可疑的交易</strong>。Agent 接在现有规则引擎后面，不需要替换已有系统——对客户来说是"加一个智能筛选层"，不是"推翻重做"。</p>
+<div class="sub-detail" id="det-L3-tool">
+<p style="font-weight:600;margin-bottom:4px;">工具调用引擎（Tool Router）</p>
+<p style="font-size:0.7rem;">根据 Agent 的 Action 决策路由到对应 Tool，管理并发调用、结果聚合和异常处理。支持 ReAct 循环中的多轮工具调用。</p>
 </div>
+
+<div class="sub-detail" id="det-L3-mem">
+<p style="font-weight:600;margin-bottom:4px;">记忆与上下文管理</p>
+<table><tr><td style="font-weight:600;">短期记忆</td><td>当前调查 Session 内的所有工具调用结果，维护在 Agent 上下文窗口中</td></tr>
+<tr><td style="font-weight:600;">长期记忆</td><td>历史案件结论存入向量数据库，支持 case_retrieval 检索</td></tr>
+<tr><td style="font-weight:600;">状态持久化</td><td>每次工具调用结果落库，支持断点续跑</td></tr>
+<tr><td style="font-weight:600;">多轮对话</td><td>审查员可通过自然语言追问，Agent 基于已有上下文继续深挖</td></tr></table>
+</div>
+
+<div class="sub-detail" id="det-L3-tools">
+<p style="font-weight:600;margin-bottom:8px;">8 个调查工具详细规格</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.7rem;">
+<div style="background:#fff;border-radius:6px;padding:10px;"><strong>transaction_query</strong><br><span style="color:var(--muted);">查询指定账户在时间范围内的交易记录，返回列表+统计摘要（总笔数/总金额/夜间占比等）</span><br><span style="color:var(--blue);font-size:0.65rem;">输入: account_id, start_date, end_date, filters</span></div>
+<div style="background:#fff;border-radius:6px;padding:10px;"><strong>graph_analysis</strong><br><span style="color:var(--muted);">资金流向图中发现关联账户、循环路径、团伙结构。N跳路径+社区发现(Louvain)</span><br><span style="color:var(--blue);font-size:0.65rem;">输入: account_id, depth, analysis_type</span></div>
+<div style="background:#fff;border-radius:6px;padding:10px;"><strong>rule_engine</strong><br><span style="color:var(--muted);">逐条检查预设 AML 规则，输出命中列表+依据+置信度+监管条款。内置规则如分散转入、制裁关联等</span><br><span style="color:var(--blue);font-size:0.65rem;">输入: account_id, rule_set</span></div>
+<div style="background:#fff;border-radius:6px;padding:10px;"><strong>risk_scorer</strong><br><span style="color:var(--muted);">综合评分 0-100，分项: 行为异常度/关联风险/黑名单匹配/历史违规。支持 XGBoost 或 LLM 评分</span><br><span style="color:var(--blue);font-size:0.65rem;">输入: account_id, context</span></div>
+<div style="background:#fff;border-radius:6px;padding:10px;"><strong>sanction_check</strong><br><span style="color:var(--muted);">核查 OFAC/UN/央行黑名单。精确匹配+向量模糊匹配（防拼写变体逃避）</span><br><span style="color:var(--blue);font-size:0.65rem;">输入: name, id_number 或 account_id</span></div>
+<div style="background:#fff;border-radius:6px;padding:10px;"><strong>case_retrieval</strong><br><span style="color:var(--muted);">向量语义检索 Top-K 相似历史 AML 案例，含结论/处罚结果</span><br><span style="color:var(--blue);font-size:0.65rem;">输入: 案件摘要文本</span></div>
+<div style="background:#fff;border-radius:6px;padding:10px;"><strong>news_search</strong><br><span style="color:var(--muted);">检索客户/企业相关负面新闻，标注情感倾向和风险关键词</span><br><span style="color:var(--blue);font-size:0.65rem;">输入: entity_name</span></div>
+<div style="background:#fff;border-radius:6px;padding:10px;"><strong>report_generator</strong><br><span style="color:var(--muted);">基于调查结论生成符合监管格式的 SAR 报告草稿(Markdown/PDF)</span><br><span style="color:var(--blue);font-size:0.65rem;">输入: 调查摘要/风险评级/命中规则/证据</span></div>
+</div></div></div></div>
+
+<div class="arrow-down"><span>▼</span></div>
+
+<!-- ══ L4 ══ -->
+<div class="arch-layer" style="background:linear-gradient(135deg,#fef5f5,#fce8e8);border:1px solid #f5c6c6;">
+<div class="layer-header" onclick="toggleLayer('L4')">
+<span class="arch-arrow open" id="arr-L4">▾</span><div><div style="font-weight:700;font-size:0.9rem;">输出与干预层</div><div style="font-size:0.7rem;color:var(--muted);">SAR 报告 · 人工审核 · 仪表盘</div></div>
+<div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;"><span style="background:#fce8e8;padding:2px 8px;border-radius:3px;font-size:0.65rem;font-family:var(--font-mono);">Human-in-the-Loop</span></div>
+</div>
+<div class="layer-body" id="body-L4" style="display:block;border-top:1px dashed #f5c6c6;">
+<div class="sub-grid" style="grid-template-columns:repeat(3,1fr);">
+  <div class="sub-card" onclick="toggleSub('L4-sar')" id="card-L4-sar"><strong>SAR 报告结构</strong><span class="hint">6大部分</span></div>
+  <div class="sub-card" onclick="toggleSub('L4-hitl')" id="card-L4-hitl"><strong>人工审核设计</strong><span class="hint">HITL</span></div>
+  <div class="sub-card" onclick="toggleSub('L4-dash')" id="card-L4-dash"><strong>监控仪表盘</strong><span class="hint">5类指标</span></div>
+</div>
+<div class="sub-detail" id="det-L4-sar">
+<table><tr style="border-bottom:2px solid var(--border);"><td style="font-weight:600;">部分</td><td style="font-weight:600;">内容</td></tr>
+<tr><td>基本信息</td><td>报告编号、生成时间、涉及账户/客户清单</td></tr>
+<tr><td>可疑行为摘要</td><td>时间范围、涉及金额、核心行为描述（Agent 生成自然语言）</td></tr>
+<tr><td>证据详情</td><td>命中规则(含监管条款引用)、Top 10 异常交易、资金流向图、关联账户列表</td></tr>
+<tr><td>风险评估</td><td>量化评分及分项、洗钱手法类型判断（三阶段：放置/分层/整合）</td></tr>
+<tr><td>处置建议</td><td>账户处置（监控/限制/冻结）、是否上报监管及理由、后续调查方向</td></tr>
+<tr><td>审核信息</td><td>Agent推理摘要、审核员意见、最终决策与签批</td></tr>
+</table></div>
+<div class="sub-detail" id="det-L4-hitl">
+<p style="font-weight:600;margin-bottom:6px;">Human-in-the-Loop 介入触发条件</p>
+<table><tr style="border-bottom:2px solid var(--border);"><td style="font-weight:600;">场景</td><td style="font-weight:600;">触发条件</td><td style="font-weight:600;">介入方式</td></tr>
+<tr><td>高风险案件</td><td>风险评分 ≥ 80 或命中制裁名单</td><td>强制人工审核</td></tr>
+<tr><td>Agent 不确定</td><td>置信度标记 LOW</td><td>请求人工判断</td></tr>
+<tr><td>制裁模糊命中</td><td>相似度 0.7-0.95</td><td>人工确认身份</td></tr>
+<tr><td>上报决策</td><td>是否提交 SAR 至监管</td><td>合规官最终签批</td></tr></table>
+<p style="font-size:0.7rem;margin-top:8px;"><strong>审核 SLA:</strong> 极高风险24h · 高风险3工作日 · 中风险7工作日</p>
+</div>
+<div class="sub-detail" id="det-L4-dash">
+<table><tr style="border-bottom:2px solid var(--border);"><td style="font-weight:600;">指标</td><td style="font-weight:600;">说明</td></tr>
+<tr><td>实时预警队列</td><td>待处理案件数量、按风险等级分布</td></tr>
+<tr><td>Agent 工作量</td><td>日处理案件数、平均处理时长</td></tr>
+<tr><td>规则命中热力图</td><td>各规则触发频率趋势</td></tr>
+<tr><td>审核效率</td><td>审核员处理速度、Agent建议采纳率</td></tr>
+<tr><td>误报率追踪</td><td>人工驳回率趋势（用于模型优化）</td></tr>
+</table></div></div></div>
+
+</div></div>
+
+<div class="section"><h2>安全与合规设计</h2>
+<div class="card-row">
+<div class="card" style="border-left:3px solid var(--red);"><h4>数据安全</h4><div class="detail">PII 数据 AES-256 加密存储和传输<br>LLM 调用时敏感信息脱敏处理<br>操作日志全量审计，满足监管留痕</div></div>
+<div class="card" style="border-left:3px solid var(--yellow);"><h4>访问控制</h4><div class="detail">RBAC: 分析员/审核员/合规官/管理员<br>敏感操作双人确认<br>Agent 工具只读，写操作由人工触发</div></div>
+<div class="card" style="border-left:3px solid var(--blue);"><h4>模型可信度</h4><div class="detail">每步推理产出完整推理链，禁止黑盒<br>所有结论标注依据来源<br>定期人工复核 Agent 决策样本</div></div>
+<div class="card" style="border-left:3px solid var(--green);"><h4>监管合规</h4><div class="detail">遵循《反洗钱法》及央行规定<br>SAR 格式符合 AMAC 要求<br>系统接受内部审计和监管检查</div></div>
+</div></div>
+
+<div class="section"><h2>迭代路线图</h2>
+<div style="display:flex;gap:12px;font-size:0.82rem;align-items:center;flex-wrap:wrap;">
+<div style="flex:1;min-width:180px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center;"><div style="font-family:var(--font-mono);color:var(--accent);font-weight:600;margin-bottom:8px;">Phase 1 · MVP Demo · 4周</div><div style="color:var(--muted);font-size:0.75rem;line-height:1.6;">SQLite + NetworkX 数据层<br>1万账户 · 100万笔交易<br>6个核心工具<br>LangGraph ReAct Agent<br>Streamlit 审核界面</div></div>
+<span style="color:var(--muted);">→</span>
+<div style="flex:1;min-width:180px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center;"><div style="font-family:var(--font-mono);color:var(--accent);font-weight:600;margin-bottom:8px;">Phase 2 · 功能完善 · 4周</div><div style="color:var(--muted);font-size:0.75rem;line-height:1.6;">PostgreSQL + Neo4j 生产级<br>Qdrant 案例语义检索<br>XGBoost 风险评分<br>多 Agent 并行<br>完整审核工作台</div></div>
+<span style="color:var(--muted);">→</span>
+<div style="flex:1;min-width:180px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center;"><div style="font-family:var(--font-mono);color:var(--accent);font-weight:600;margin-bottom:8px;">Phase 3 · 生产加固 · 持续</div><div style="color:var(--muted);font-size:0.75rem;line-height:1.6;">Kafka 实时交易流<br>安全权限体系<br>反馈回路: 标注→优化<br>日处理百万级交易<br>监管备案</div></div>
+</div></div>
+
+<div class="section"><h2>为什么华峻捷科适合做这个</h2>
+<p>华峻捷科已经在给东莞银行做反洗钱系统。银行的最大痛点不是"规则不够多"，而是<strong>误报太多淹没了真正可疑的交易</strong>。Agent 接在现有规则引擎后面，不需要替换已有系统——对客户来说是"加一个智能筛选层"。</p></div>
 
 </div><!-- /page0 -->
 
 <!-- ═══════════ PAGE 2 ═══════════ -->
 <div id="page1" class="page">
-
-<div class="section">
-  <h2>Demo 演示</h2>
-  <p>账户 ACC-88812 触发大额现金交易预警。Agent 启动 ReAct 调查循环，逐步调用工具收集证据。</p>
-
-  <div id="trace-root"></div>
-  <div id="controls"></div>
-  <div id="summary"></div>
+<div class="section"><h2>Demo 演示</h2>
+<p>账户 ACC-88812 触发大额现金交易预警。Agent 启动 ReAct 调查循环。</p>
+<div id="trace-root"></div><div id="controls"></div><div id="summary"></div></div>
 </div>
 
-</div><!-- /page1 -->
-
-<div class="footer">
-  反洗钱 AML Agent Demo · ReAct 架构 · 华峻捷科面试作品 · 2026
+<div class="footer">反洗钱 AML Agent Demo · ReAct 架构 · 华峻捷科面试作品 · 2026</div>
 </div>
-
-</div><!-- /container -->
 
 <script>
-// ═══════════ DATA ═══════════
+// ══ Page switching ══
+function switchPage(idx) {
+  document.querySelectorAll('.page-nav button').forEach((b,i)=>b.classList.toggle('active',i===idx));
+  document.getElementById('page0').classList.toggle('active',idx===0);
+  document.getElementById('page1').classList.toggle('active',idx===1);
+}
+
+// ══ Architecture toggle ══
+function toggleLayer(id) {
+  const body = document.getElementById('body-'+id);
+  const arrow = document.getElementById('arr-'+id);
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  arrow.classList.toggle('open', !open);
+}
+
+function toggleSub(id) {
+  const det = document.getElementById('det-'+id);
+  const card = document.getElementById('card-'+id);
+  const open = det.style.display !== 'none';
+  // Close all subs in same layer first
+  const layerId = id.split('-')[0];
+  document.querySelectorAll('[id^="det-'+layerId+'"]').forEach(d => d.style.display = 'none');
+  document.querySelectorAll('[id^="card-'+layerId+'"]').forEach(c => c.classList.remove('open'));
+  if (!open) {
+    det.style.display = 'block';
+    card.classList.add('open');
+  }
+}
+
+// ══ Demo (page 2) ══
 const traceSteps = [
   { type:"task", label:"TASK", content:"账户 ACC-88812 触发规则 R-001（大额现金交易）预警，Agent 启动深度调查。" },
-
   { type:"thought", label:"THOUGHT", content:"首先查询 ACC-88812 近30天交易流水，了解交易模式基线。" },
   { type:"action", label:"ACTION", content:"transaction_query(account_id=\"ACC-88812\", start_date=\"2024-10-01\", end_date=\"2024-11-04\")",
-    toolDetail: { fn:"tool: transaction_query", result:`返回 17 笔交易，统计摘要:
-· 总流入: ¥241,500（7笔现金存入）
-· 总流出: ¥833,000（10笔转账）
-· 对手方: 5个
-· 近7日日均笔数: 2.4（90日均值 0.3 → 突增 8.0x）
-· 现金金额区间: ¥46,000-51,000（均略低于 ¥50,000 大额线）
-· 现金存入网点: 4个不同支行（天河/越秀/海珠/荔湾）`
-  }},
-
+    toolDetail:{fn:"tool: transaction_query",result:"返回 17 笔交易，统计摘要:\n· 总流入: ¥241,500（7笔现金存入）\n· 总流出: ¥833,000（10笔转账）\n· 对手方: 5个\n· 近7日日均笔数: 2.4（90日均值 0.3 → 突增 8.0x）\n· 现金金额区间: ¥46,000-51,000（均略低于 ¥50,000 大额线）\n· 现金存入网点: 4个不同支行（天河/越秀/海珠/荔湾）"}},
   { type:"thought", label:"THOUGHT", content:"交易模式异常：多网点、集中金额区间、频率突增8倍。调用规则引擎检查命中哪些 AML 规则。" },
   { type:"action", label:"ACTION", content:"rule_engine(account_id=\"ACC-88812\", rule_set=\"all\")",
-    toolDetail: { fn:"tool: rule_engine", result:`命中 3 条规则:
-
-✓ R-001 大额现金交易 — 5笔≥48K且<50K，疑似拆分规避报告线
-  法规: 《金融机构大额交易和可疑交易报告管理办法》第9条
-
-✓ R-002 分散转入集中转出 — 7笔小额分散存入后大额集中转出
-  法规: 银发[2018]163号
-
-✓ R-006 交易行为突变 — 近7日交易频率是历史基线 8.0 倍
-  法规: 银发[2018]163号`
-  }},
-
+    toolDetail:{fn:"tool: rule_engine",result:"命中 3 条规则:\n\n✓ R-001 大额现金交易 — 5笔≥48K且<50K，疑似拆分规避报告线\n  法规: 《金融机构大额交易和可疑交易报告管理办法》第9条\n\n✓ R-002 分散转入集中转出 — 7笔小额分散存入后大额集中转出\n  法规: 银发[2018]163号\n\n✓ R-006 交易行为突变 — 近7日交易频率是历史基线 8.0 倍\n  法规: 银发[2018]163号"}},
   { type:"thought", label:"THOUGHT", content:"已命中3条规则。需追踪资金链路，对 ACC-88812 做图谱分析。" },
   { type:"action", label:"ACTION", content:"graph_analysis(account_id=\"ACC-88812\", depth=3, type=\"cycle/community\")",
-    toolDetail: { fn:"tool: graph_analysis", result:`【资金闭环路径】
-1. ACC-88812→ACC-22301→ACC-55029→ACC-88812
-   3跳闭环，¥180,000，3天内完成
-
-2. ACC-88812→ACC-71102→ACC-30045→ACC-11208→ACC-88812
-   4跳闭环，¥320,000，2天内完成
-
-【共享身份】
-· ACC-88812/ACC-55029/ACC-11208 → 同一人(张某·CUST-4201)
-· ACC-22301(李某)与ACC-30045(王某) → 共享注册手机号
-
-【社区检测】6个账户资金网络，模块度 Q=0.87（强社区结构）`
-  }},
-
+    toolDetail:{fn:"tool: graph_analysis",result:"【资金闭环路径】\n1. ACC-88812→ACC-22301→ACC-55029→ACC-88812\n   3跳闭环，¥180,000，3天内完成\n\n2. ACC-88812→ACC-71102→ACC-30045→ACC-11208→ACC-88812\n   4跳闭环，¥320,000，2天内完成\n\n【共享身份】\n· ACC-88812/ACC-55029/ACC-11208 → 同一人(张某·CUST-4201)\n· ACC-22301(李某)与ACC-30045(王某) → 共享手机号\n\n【社区检测】6账户资金网络，模块度 Q=0.87（强社区结构）"}},
   { type:"thought", label:"THOUGHT", content:"资金闭环+共享身份→高度可疑。核查制裁名单。" },
   { type:"action", label:"ACTION", content:"sanction_check(account_id=\"ACC-88812\")",
-    toolDetail: { fn:"tool: sanction_check", result:`⚠ 模糊命中（相似度 0.91）
-
-名单: OFAC SDN List
-姓名: Zhang XX（模糊匹配 "张某"）
-ID片段: 440************235
-原因: 涉嫌跨境毒品资金链
-置信度: 0.91 → 需人工确认身份`
-  }},
-
+    toolDetail:{fn:"tool: sanction_check",result:"⚠ 模糊命中（相似度 0.91）\n名单: OFAC SDN List\n姓名: Zhang XX（模糊匹配 \"张某\"）\nID片段: 440************235\n原因: 涉嫌跨境毒品资金链\n置信度: 0.91 → 需人工确认身份"}},
   { type:"thought", label:"THOUGHT", content:"证据充分。综合评分 + 检索历史案例交叉验证。" },
   { type:"action", label:"ACTION", content:"risk_scorer(account_id=\"ACC-88812\")",
-    toolDetail: { fn:"tool: risk_scorer", result:`综合评分: 87 / 100 → 极高风险
-
-分项:
-  行为异常度(40%): 36/40 — 频率8x、多网点、金额集中
-  关联风险(25%):   23/25 — 6账户闭环、共享身份、制裁模糊命中
-  黑名单(20%):     18/20 — OFAC SDN 模糊匹配 0.91
-  历史违规(15%):   10/15 — 无违规历史（账户仅8月）`
-  }},
-
+    toolDetail:{fn:"tool: risk_scorer",result:"综合评分: 87 / 100 → 极高风险\n分项: 行为异常度 36/40 · 关联风险 23/25 · 黑名单 18/20 · 历史违规 10/15"}},
   { type:"action", label:"ACTION", content:"case_retrieval(query=\"个体工商户 现金存入 分散转出 多层账户 闭环流转\")",
-    toolDetail: { fn:"tool: case_retrieval", result:`Top-1 相似案例 (余弦相似度 0.88):
-SAR-2024-0872 | 确认洗钱
-个体工商户大量现金存入→分散转出→多层账户→境外
-处理: 账户冻结、上报央行、罚款50万、追缴违法所得`
-  }},
-
-  { type:"final", label:"FINAL", content:`═══════════════════════════════════════
-调查结论 — 账户 ACC-88812（张某）
-═══════════════════════════════════════
-
-风险评级: 极高 (87/100)
-命中规则: R-001 / R-002 / R-006
-制裁: OFAC SDN 模糊命中(0.91)
-历史: 与已确认洗钱案例相似度 0.88
-
-洗钱阶段: 放置(现金存入)→分层(多账户流转)→整合(闭环回流)
-
-建议: 立即冻结 ACC-88812 及5个关联账户 · 上报央行SAR · 合规官确认制裁身份`
-  }
+    toolDetail:{fn:"tool: case_retrieval",result:"Top-1 相似案例 (余弦相似度 0.88):\nSAR-2024-0872 | 确认洗钱\n个体工商户大量现金存入→分散转出→多层账户→境外\n处理: 账户冻结、上报央行、罚款50万、追缴违法所得"}},
+  { type:"final", label:"FINAL", content:"═══════════════════════════════════════\n调查结论 — 账户 ACC-88812（张某）\n═══════════════════════════════════════\n\n风险评级: 极高 (87/100)\n命中规则: R-001 / R-002 / R-006\n制裁: OFAC SDN 模糊命中(0.91)\n历史: 与已确认洗钱案例相似度 0.88\n\n洗钱阶段: 放置(现金存入)→分层(多账户流转)→整合(闭环回流)\n\n建议: 立即冻结 ACC-88812 及5个关联账户 · 上报央行SAR · 合规官确认制裁身份" }
 ];
 
 let currentStep = -1, interval = null;
@@ -436,45 +376,22 @@ function renderTrace() {
   let html = '<div class="progress">';
   for (let i = 0; i <= 6; i++) html += `<div class="dot ${i<currentStep?'done':''} ${i===currentStep?'current':''}"></div>`;
   html += '</div>';
-
   for (let i = 0; i <= currentStep && i < traceSteps.length; i++) {
     const s = traceSteps[i];
-    if (s.type === 'task') {
-      html += `<div class="trace-block" style="background:var(--card);border:1px solid var(--border);border-left:3px solid var(--text);"><div class="trace-label" style="color:var(--text);">📋 ${s.label}</div><div class="trace-content">${s.content}</div></div>`;
-    } else {
-      const cls = `trace-${s.type}`;
-      html += `<div class="trace-block ${cls}"><div class="trace-label">${s.type==='thought'?'💭':'🔧'} ${s.label}</div><div class="trace-content">${s.content}</div>`;
+    if (s.type === 'task') html += `<div class="trace-block" style="background:var(--card);border:1px solid var(--border);border-left:3px solid var(--text);"><div class="trace-label" style="color:var(--text);">📋 ${s.label}</div><div class="trace-content">${s.content}</div></div>`;
+    else {
+      html += `<div class="trace-block trace-${s.type}"><div class="trace-label">${s.type==='thought'?'💭':'🔧'} ${s.label}</div><div class="trace-content">${s.content}</div>`;
       if (s.toolDetail) html += `<div class="tool-call"><div class="fn">${s.toolDetail.fn}</div><div class="result">${s.toolDetail.result}</div></div>`;
       html += '</div>';
     }
   }
   root.innerHTML = html;
-
-  document.getElementById('summary').innerHTML = currentStep >= traceSteps.length-1 ? `
-    <div class="summary high">
-      <div class="score">⚠ 极高风险 · 87/100</div>
-      <p style="margin-top:8px;font-size:0.85rem;">命中 3 条 AML 规则 &nbsp;|&nbsp; OFAC SDN 模糊命中(0.91) &nbsp;|&nbsp; 6账户资金闭环<br>建议: 立即冻结账户 + 上报央行SAR + 合规官确认制裁名单身份</p>
-      <div class="meta">历史案例匹配: SAR-2024-0872（相似度0.88）— 已确认洗钱</div>
-    </div>` : '';
+  document.getElementById('summary').innerHTML = currentStep >= traceSteps.length-1 ? `<div class="summary high"><div class="score">⚠ 极高风险 · 87/100</div><p style="margin-top:8px;font-size:0.85rem;">命中 3 条规则 | OFAC 模糊命中(0.91) | 6账户资金闭环<br>建议: 立即冻结 + 上报央行SAR + 合规官确认制裁身份</p></div>` : '';
 }
 
 function nextStep() { if(currentStep<traceSteps.length-1){currentStep++;renderTrace();} }
 function autoPlay(){ currentStep=-1;renderTrace(); if(interval)clearInterval(interval); let i=0; interval=setInterval(()=>{if(i<traceSteps.length){currentStep=i;renderTrace();i++;}else clearInterval(interval);},1000); }
 function reset(){ currentStep=-1;if(interval)clearInterval(interval);renderTrace(); }
-
-function switchPage(idx) {
-  document.querySelectorAll('.page-nav button').forEach((b,i)=>b.classList.toggle('active',i===idx));
-  document.getElementById('page0').classList.toggle('active',idx===0);
-  document.getElementById('page1').classList.toggle('active',idx===1);
-}
-
-function toggleArch(idx) {
-  const detail = document.getElementById('arch-detail-'+idx);
-  const arrow = document.getElementById('arch-arrow-'+idx);
-  const visible = detail.style.display !== 'none';
-  detail.style.display = visible ? 'none' : 'block';
-  arrow.textContent = visible ? '▸' : '▾';
-}
 
 renderTrace();
 document.getElementById('controls').innerHTML = `<div class="btn-row"><button class="btn" onclick="autoPlay()">▶ 自动演示</button><button class="btn accent" onclick="nextStep()">下一步 →</button><button class="btn" onclick="reset()" style="margin-left:auto;">↺ 重置</button></div>`;
